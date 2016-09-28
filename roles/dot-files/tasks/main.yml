@@ -1,0 +1,23 @@
+---
+
+- name: ensure prezto is installed if ZSH is present
+  include: prezto.yml
+  tags: prezto
+
+- name: ensure shell facts are set
+  include: shell.yml
+  tags: powerline
+
+- name: ensure powerline tasks are run
+  include: powerline.yml
+  tags: powerline
+
+- name: ensure vim tasks are run
+  include: vim.yml
+  tags: vim
+
+- name: ensure tmux.conf is present
+  copy:
+    src: tmux.conf
+    dest: ~/.tmux.conf
+    mode: 0644

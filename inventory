@@ -1,0 +1,6 @@
+[localhost]
+localhost                        ansible_connection=local   machine_rc_file=dev_machine_rc
+
+[dev-servers]
+
+[live-servers]

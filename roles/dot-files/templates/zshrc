@@ -1,0 +1,30 @@
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+if [ "$(uname)" != 'Darwin' ]; then
+	# Export the python pip local install bin path
+	export PATH="$PATH:{{ ansible_env.HOME }}/.local/bin" # python bin
+
+	export PYTHONPATH="$PYTHONPATH:{{ ansible_env.HOME }}/.local/lib/python2.6/site-packages"
+
+	# Start the powerline daemon if required
+	{{ ansible_env.HOME }}/.local/bin/powerline-daemon -q
+else
+	# Start the powerline daemon if required
+	/usr/local/bin/powerline-daemon -q
+fi
+
+
+
+# Include my custom shell functions
+[ -f {{ ansible_env.HOME }}/.shell_functions ] && source {{ ansible_env.HOME }}/.shell_functions
+
+# SU keeping my session info
+alias su="su -c \"export ZDOTDIR={{ ansible_env.HOME }} && zsh\""
+
+# "real" SU
+alias rsu="/bin/su"
+
+[ -f {{ ansible_env.HOME }}/.machine_rc ] && source {{ ansible_env.HOME }}/.machine_rc

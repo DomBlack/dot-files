@@ -1,0 +1,13 @@
+
+# Search for a given process
+function psgrep()
+{
+	# The echo | sed removes the grep line from being detected
+	ps aux | GREP_COLOR="1;37" egrep -i --color=always $(echo "$1" | sed 's/^\(.\)\(.*\)$/[\1]\2/')
+}
+
+# Search for files and display via less
+function search() {
+	# errors from the find are output in red
+	find . -iname "*$1*" 2> >(sed $'s,.*,\e[31m&\e[m,'>&1) | GREP_COLOR="1;37" egrep -i --color=always "$1|$" | less;
+}

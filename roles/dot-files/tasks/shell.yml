@@ -1,0 +1,24 @@
+---
+
+#- name: ensure shell facts are configured as per Bash
+#  set_fact:
+#    rc_file: "~/.bashrc"
+#  when: ansible_env.SHELL == "/bin/bash"
+
+- name: ensure shell facts are configured as per ZSH
+  set_fact:
+    rc_file: "~/.zshrc"
+#  when: ansible_env.SHELL == "/bin/zsh"
+
+- name: ensure my shell functions file is copied
+  copy:
+    src: shell_functions
+    dest: "{{ ansible_env.HOME }}/.shell_functions"
+    mode: 0700
+
+- name: ensure my shell functions are included
+  lineinfile:
+    dest: "{{ rc_file }}"
+    state: present
+    regexp: "source {{ ansible_env.HOME }}/.shell_functions$"
+    line: "[ -f {{ ansible_env.HOME }}/.shell_functions ] && source {{ ansible_env.HOME }}/.shell_functions"

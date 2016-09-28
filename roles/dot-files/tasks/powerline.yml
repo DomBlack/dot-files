@@ -1,0 +1,42 @@
+---
+
+- name: ensure the powerline folder is owned by me
+  file:
+    path: ~/.config/powerline
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0775
+
+- name: check to see if pip is already installed.
+  command: "pip --version"
+  ignore_errors: true
+  changed_when: false # read-only task
+  always_run: true # for check mode
+  register: pip_is_installed
+
+- name: ensure pip is installed
+  easy_install:
+    name: pip
+    state: present
+  when: pip_is_installed.rc != 0
+
+- name: ensure powerline is installed
+  pip:
+    name: powerline-status
+    extra_args: '--upgrade --user' # upgrade/ignore-installed forces it always into the user directory
+    state: present
+
+- name: ensure powerline dependancies are installed
+  pip:
+    name: "{{ item }}"
+    extra_args: '--upgrade --user'
+    state: present
+  with_items:
+    - argparse
+
+- name: ensure the powerline config file is present
+  copy:
+    src: powerline-config.json
+    dest: "{{ ansible_env.HOME }}/.config/powerline/config.json"
+    owner: "{{ ansible_user_id }}"
+    mode: 0664

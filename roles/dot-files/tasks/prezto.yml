@@ -1,0 +1,74 @@
+---
+
+- name: read ZSH version
+  shell: "zsh --version | awk '{print $2}'"
+  changed_when: false # read-only task
+  always_run: true # for check mode
+  register: zsh_version
+
+- name: set prezto to master branch if supported
+  set_fact:
+    prezto_version: master
+  when: zsh_version.stdout | version_compare('4.3.17', '>=')
+
+- name: set prezto to a 4.3.11 supported version
+  set_fact:
+    prezto_version: zsh-4.3.11
+  when: zsh_version.stdout | version_compare('4.3.17', '<')
+
+- name: ensure the prezto repo is cloned
+  git:
+    repo: https://github.com/DomBlack/prezto.git
+    dest: "{{ ansible_env.HOME }}/.zprezto"
+    update: no
+    recursive: yes
+    version: "{{ prezto_version }}"
+
+- name: check if zshrc is a link
+  stat:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+  register: st
+
+- name: remove the zshrc link
+  file:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    state: absent
+  when: st.stat.islnk is defined and st.stat.islnk
+
+- name: check if zpreztorc is a link
+  stat:
+    path: "{{ ansible_env.HOME }}/.zpreztorc"
+  register: st
+
+- name: remove the zpreztorc link
+  file:
+    path: "{{ ansible_env.HOME }}/.zpreztorc"
+    state: absent
+  when: st.stat.islnk is defined and st.stat.islnk
+
+- name: ensure unmodified prezto config files are linked
+  copy:
+    src: "{{ ansible_env.HOME }}/.zprezto/runcoms/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.{{ item }}"
+    remote_src: yes
+  with_items:
+    - zlogin
+    - zlogout
+    - zprofile
+    - zshenv
+
+- name: ensure modified prezto config files are present
+  template:
+    src: "{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.{{ item }}"
+    mode: 0660
+  with_items:
+    - zpreztorc
+    - zshrc
+
+- name: ensure any machine specific RC files are copied
+  copy:
+    src: "{{ machine_rc_file }}"
+    dest: "{{ ansible_env.HOME }}/.machine_rc"
+    mode: 0660
+  when: machine_rc_file is defined
