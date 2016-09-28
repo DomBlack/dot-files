@@ -20,19 +20,33 @@
     state: present
   when: pip_is_installed.rc != 0
 
+- name: check if powerline is locally installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/bin/powerline"
+  changed_when: false # read-only task
+  always_run: true # for check mode
+  register: powerline_installed
+
 - name: ensure powerline is installed
   pip:
     name: powerline-status
-    extra_args: '--upgrade --user' # upgrade/ignore-installed forces it always into the user directory
+    extra_args: '--ignore-installed --upgrade --user' # upgrade/ignore-installed forces it always into the user directory
     state: present
+  when: powerline_installed.stat.exists == False
 
-- name: ensure powerline dependancies are installed
+- name: check if argparse is locally installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/lib/python2.6/site-packages/argparse.py"
+  changed_when: false # read-only task
+  always_run: true # for check mode
+  register: argparse_installed
+
+- name: ensure powerline dependancy argparse is installed
   pip:
-    name: "{{ item }}"
-    extra_args: '--upgrade --user'
+    name: "argparse"
+    extra_args: '--ignore-installed --upgrade --user'
     state: present
-  with_items:
-    - argparse
+  when: argparse_installed.stat.exists == False
 
 - name: ensure the powerline config file is present
   copy:

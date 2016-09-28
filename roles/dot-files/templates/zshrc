@@ -28,3 +28,11 @@ alias su="su -c \"export ZDOTDIR={{ ansible_env.HOME }} && zsh\""
 alias rsu="/bin/su"
 
 [ -f {{ ansible_env.HOME }}/.machine_rc ] && source {{ ansible_env.HOME }}/.machine_rc
+
+# If we have a running tmux session, attach to it, otherwise stay out of tmux
+if [[ -z "$TMUX" && -z "$EMACS" && -z "$VIM" ]] && \
+   [[ -n "$SSH_TTY" ]] && \
+   tmux has-session 2> /dev/null; then
+
+   exec tmux attach
+fi
