@@ -16,8 +16,6 @@ else
 	/usr/local/bin/powerline-daemon -q
 fi
 
-
-
 # Include my custom shell functions
 [ -f {{ ansible_env.HOME }}/.shell_functions ] && source {{ ansible_env.HOME }}/.shell_functions
 
@@ -26,6 +24,9 @@ alias su="su -c \"export ZDOTDIR={{ ansible_env.HOME }} && zsh\""
 
 # "real" SU
 alias rsu="/bin/su"
+
+# Alias VIM to always start with my vimrc
+alias vim="vim -u {{ ansible_env.HOME }}/.vimrc"
 
 [ -f {{ ansible_env.HOME }}/.machine_rc ] && source {{ ansible_env.HOME }}/.machine_rc
 
