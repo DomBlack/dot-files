@@ -3,6 +3,9 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+# All the paths relating to the ansible_env.HOME means that this file always points at stuff absolutely
+#  in my home directory. This allows me to su to root while having my standard dot files.
+
 if [ "$(uname)" != 'Darwin' ]; then
 	# Export the python pip local install bin path
 	export PATH="$PATH:{{ ansible_env.HOME }}/.local/bin" # python bin
