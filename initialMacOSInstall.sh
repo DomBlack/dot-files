@@ -11,7 +11,7 @@ brew tap caskroom/cask
 brew cask install google-chrome skype dropbox little-snitch
 
 # Utils
-brew install brew-cask-completion vim openssl mas
+brew install brew-cask-completion vim openssl mas tree
 brew cask install alfred bartender iterm2 arq 1password synergy keepassx the-unarchiver fluor
 brew cask install flux sequel-pro sublime-text spotify dash spotify-notifications hyperdock hyperswitch
 brew cask install suspicious-package cleanmymac htop less vim nmap hammerspoon karabiner-elements

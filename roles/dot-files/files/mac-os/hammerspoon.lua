@@ -3,7 +3,7 @@
 k = hs.hotkey.modal.new({}, "F17")
 
 function kwmc(s)
-  hs.execute("/usr/local/bin/kwmc " .. s)
+  hs.execute("/usr/local/bin/chunkc " .. s)
   k.triggered = true
 end
 
@@ -16,91 +16,87 @@ for i,key in ipairs(hyperBindings) do
 end
 
 k:bind('', 'r', nil, function()
-  kwmc("tree rotate 90")
+  kwmc("tiling::desktop --rotate 90")
 end)
 
 -- move focus to screen on left
-k:bind('', '1', nil, function()
+k:bind('', '1', nil, function() 
   -- kwmc("window -m display 2")
-  kwmc("display -f 2")
+  kwmc("tiling::window --send-to-monitor 2")
 end)
 
 -- move focus to screen in middle
 k:bind('', '2', nil, function()
 --  kwmc("window -m display 0")
-  kwmc("display -f 0")
+  kwmc("tiling::window --send-to-monitor 0")
 end)
 
 -- move focus to screen on right
 k:bind('', '3', nil, function()
 --  kwmc("window -m display 1")
-  kwmc("display -f 1")
+  kwmc("tiling::window --send-to-monitor 1")
 end)
 
 -- move focus to screen on left
 k:bind('', '0', nil, function()
-  kwmc("window -m display 2")
+  kwmc("tiling::monitor -f 2")
 end)
 
 -- move focus to screen in middle
 k:bind('', '-', nil, function()
-  kwmc("window -m display 0")
+  kwmc("tiling::monitor -f 0")
 end)
 
 -- move focus to screen on right
 k:bind('', '=', nil, function()
-  kwmc("window -m display 1")
-end)
-
--- attempt to change window size 
-k:bind('', 'q', nil, function()
-  kwmc("window -c reduce 0.05 east")
-end)
-
-k:bind('', 'e', nil, function()
-  kwmc("window -c expand 0.05 east")
+  kwmc("tiling::monitor -f 1")
 end)
 
 -- move window up
 k:bind('', 'w', nil, function()
-  kwmc("window -s north")
+  kwmc("tiling::window --swap north")
 end)
 
 -- move window left
 k:bind('', 'a', nil, function()
-  kwmc("window -s west")
+  kwmc("tiling::window --swap west")
 end)
 
 -- move window down
 k:bind('', 's', nil, function()
-  kwmc("window -s south")
+  kwmc("tiling::window --swap south")
 end)
 
 -- move window right
 k:bind('', 'd', nil, function()
-  kwmc("window -s east")
+  kwmc("tiling::window --swap east")
 end)
 
 -- move focus to the next window 
 k:bind('', 'return', nil, function()
-  kwmc("window -f next")
+  kwmc("tiling::window --focus next")
 end)
 
 -- move window to the space left
 k:bind('', 'left', nil, function()
-  kwmc("window -m space left")
+  kwmc("tiling::window --send-to-desktop prev")
   hs.eventtap.keyStroke({'ctrl'}, 'left')
 end)
 
 -- move window to the space right
 k:bind('', 'right', nil, function()
-  kwmc("window -m space right")
+  kwmc("tiling::window --send-to-desktop next")
   hs.eventtap.keyStroke({'ctrl'}, 'right')
+end)
+
+-- make all windows same size
+k:bind('', 'e', nil, function()
+  kwmc("tiling::desktop --equalize")
 end)
 
 -- toggle the current windows floating
 k:bind('', 't', nil, function()
-  kwmc("window -t focused")
+  kwmc("tiling::window --toggle float")
 end)
 
 k:bind('', 'space', nil, function()
