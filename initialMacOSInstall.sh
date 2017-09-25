@@ -15,6 +15,7 @@ brew install brew-cask-completion vim openssl mas
 brew cask install alfred bartender iterm2 arq 1password synergy keepassx the-unarchiver fluor
 brew cask install flux sequel-pro sublime-text spotify dash spotify-notifications hyperdock hyperswitch
 brew cask install suspicious-package cleanmymac htop less vim nmap hammerspoon karabiner-elements
+brew cask install microsoft-office
 
 brew tap crisidev/homebrew-chunkwm
 brew install chunkwm
