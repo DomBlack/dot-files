@@ -1,0 +1,57 @@
+---
+
+- name: ensure KeyBindings directory exists
+  file:
+    path: ~/Library/KeyBindings
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0775
+
+- name: ensure Key Bindings are configured 
+  copy:
+    src: mac-os/DefaultKeyBinding.dict
+    dest: ~/Library/KeyBindings/DefaultKeyBinding.dict
+    mode: 0644
+
+- name: ensure VMs directory exists
+  file:
+    path: ~/Virtual Machines
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0775
+
+- name: ensure VirtualBox directory exists
+  file:
+    path: ~/Virtual Machines/VirtualBox
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0775
+
+- name: ensure VirtualBox default machine folder is set
+  command: vboxmanage setproperty machinefolder "~/Virtual Machines/VirtualBox"
+
+- name: ensure Vagrant directory exists
+  file:
+    path: ~/Virtual Machines/Vagrant
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0775
+
+- name: ensure hammerspoon config directory exists
+  file:
+    path: ~/.hammerspoon
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0775
+
+- name: ensure hammerspoon init.lua is copied
+  copy:
+    src: mac-os/hammerspoon.lua
+    dest: ~/.hammerspoon/init.lua
+    mode: 0644
+
+- name: ensure chunkwm config is copied
+  copy:
+    src: mac-os/chunkwmrc.sh
+    dest: ~/.chunkwmrc
+    mode: 0755

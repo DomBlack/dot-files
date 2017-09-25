@@ -9,14 +9,17 @@ fi
 if [ "$(uname)" != 'Darwin' ]; then
 	# Export the python pip local install bin path
 	export PATH="$PATH:{{ ansible_env.HOME }}/.local/bin" # python bin
+	export PATH="$PATH:/Users/dom/Library/Python/2.7/bin"
 
 	export PYTHONPATH="$PYTHONPATH:{{ ansible_env.HOME }}/.local/lib/python2.6/site-packages"
 
 	# Start the powerline daemon if required
 	{{ ansible_env.HOME }}/.local/bin/powerline-daemon -q
 else
+	export PATH="$PATH:/Users/dom/Library/Python/2.7/bin"
+
 	# Start the powerline daemon if required
-	/usr/local/bin/powerline-daemon -q
+	/Users/dom/Library/Python/2.7/bin/powerline-daemon -q
 fi
 
 # Include my custom shell functions

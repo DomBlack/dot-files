@@ -21,3 +21,20 @@
     src: tmux.conf
     dest: ~/.tmux.conf
     mode: 0644
+
+- name: ensure global .gitignore is copied
+  copy:
+    src: gitignore
+    dest: ~/.gitignore
+    mode: 0644
+
+- name: ensure global .gitconfig is copied
+  copy:
+    src: gitconfig
+    dest: ~/.gitconfig
+    mode: 0644
+
+- name: ensure MacOS specific tasks are run
+  include: macos.yml
+  tags: macos
+  when: ansible_distribution == 'MacOSX'

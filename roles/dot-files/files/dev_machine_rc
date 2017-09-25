@@ -1,22 +1,28 @@
 # CD to a project directory with fuzzy tab completion
 function prj()
 {
-  CDPATH=.:~/workspace:~/projects:~/workspace/github && cd $1 > /dev/null;
+  CDPATH=.:~/Workspace:~/Projects && cd $1 > /dev/null;
 }
-compctl -M 'm:{a-z\-}={A-Z\_} r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_} r:|?=** m:{a-z\-}={A-Z\_}'  -W "(/Users/dom/workspace/ /Users/dom/projects/ /Users/dom/workspace/github/)" -/ prj
+compctl -M 'm:{a-z\-}={A-Z\_} r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_} r:|?=** m:{a-z\-}={A-Z\_}'  -W "(/Users/dom/Workspace/ /Users/dom/Projects/)" -/ prj
 
+alias ledgerssh='ledger-agent -s ~/.ssh/ledger.pub'
+alias git='ledger-agent ~/.ssh/ledger.pub -- git'
+alias ssh='ledger-agent ~/.ssh/ledger.pub -- ssh'
+alias scp='ledger-agent ~/.ssh/ledger.pub -- scp'
+
+# Allow auto completion on the above three aliases
+setopt complete_aliases
+
+export SHELL=/usr/local/bin/zsh
 
 # Dev Machine enviromental variables
 export PATH=/usr/local/sbin:/usr/local/bin:$PATH
-export PATH="$(brew --prefix josegonzalez/php/php53)/bin:$PATH"
 export PATH="$PATH:/usr/local/share/npm/bin"
-export PATH="/usr/local/llvm32/bin:$PATH"
-export PATH="/usr/local/cov-analysis/bin:$PATH"
-export PATH="/Users/dom/.composer/vendor/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:/usr/local/opt/go/libexec/bin:$GOPATH/bin
 
-export VAGRANT_HOME="/Users/dom/VMs/VagrantHome"
+export VAGRANT_HOME="/Users/dom/Virtual Machines/Vagrant"
 export CLOSURE_PATH="$(brew --prefix closure-compiler)/libexec/"
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0)
 export SCALA_HOME=/usr/local/opt/scala/idea
+export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="$HOME/.yarn/bin:$PATH"

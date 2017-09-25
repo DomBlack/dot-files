@@ -1,0 +1,17 @@
+[core]
+	excludesfile = /Users/dom/.gitignore
+	quotepath = false
+	editor = subl -n -w
+[color]
+ 	branch = auto
+	diff = auto
+	interactive = auto
+ 	status = auto
+ 	ui = auto
+[user]
+	name = Dominic Black
+	email = me@jdm.black
+[push]
+	default = simple
+[branch]
+	autosetuprebase = always
