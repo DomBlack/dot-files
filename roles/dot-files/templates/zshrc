@@ -37,6 +37,9 @@ alias vim="vim -u {{ ansible_env.HOME }}/.vimrc"
 # Tail with delay
 tailF() { tail -F $@ | pv -q -L 5k }
 
+# Detach all over tmux clients apart from ourselves
+alias takeover="tmux detach -a"
+
 [ -f {{ ansible_env.HOME }}/.machine_rc ] && source {{ ansible_env.HOME }}/.machine_rc
 
 # Add local/bin to path if it exists
