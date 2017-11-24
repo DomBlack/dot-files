@@ -29,7 +29,7 @@ pip3 install ledger_agent
 # Dev
 brew install git openssh ssh-copy-id zsh ansible node
 brew cask install virtualbox vagrant vagrant-manager jetbrains-toolbox
-brew cask install java java-jdk-javadoc
+brew cask install java java-jdk-javadoc java8
 brew install scala sbt ammonite-repl
 
 

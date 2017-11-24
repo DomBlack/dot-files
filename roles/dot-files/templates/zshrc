@@ -34,7 +34,20 @@ alias rsu="/bin/su"
 # Alias VIM to always start with my vimrc
 alias vim="vim -u {{ ansible_env.HOME }}/.vimrc"
 
+# Tail with delay
+tailF() { tail -F $@ | pv -q -L 5k }
+
 [ -f {{ ansible_env.HOME }}/.machine_rc ] && source {{ ansible_env.HOME }}/.machine_rc
+
+# Add local/bin to path if it exists
+if [ -d "{{ ansible_env.HOME }}/local/bin" ]; then
+	export PATH="{{ ansible_env.HOME }}/local/bin:$PATH"
+fi
+
+# TMUX temp directory
+if [ -d "{{ ansible_env.HOME }}/local/tmp" ]; then
+	export TMUX_TMPDIR="{{ ansible_env.HOME }}/local/tmp"
+fi
 
 # If we have a running tmux session, attach to it, otherwise stay out of tmux
 if [[ -z "$TMUX" && -z "$EMACS" && -z "$VIM" ]] && \

@@ -11,6 +11,7 @@ Try and used the shared settings repository if available
  - Markdown Support
  - PlantUML integration
  - YAML/Ansible Support
+ - Rainbow Brackets
 
 Then disable unwanted plug-ins.
 

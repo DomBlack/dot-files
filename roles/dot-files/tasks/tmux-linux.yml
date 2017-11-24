@@ -1,0 +1,14 @@
+---
+- set_fact:
+    tmux_version: 2.6
+
+- name: Get current tmux version
+  shell: tmux -V | egrep '[0-9]*\.[0-9]*$' -o
+  environment:
+    PATH: "{{ ansible_env.HOME }}/local/bin:{{ ansible_env.PATH }}"
+  register: current_tmux_version
+  changed_when: False
+
+- name: Install latest tmux locally
+  script: files/install_tmux.sh "{{ tmux_version }}"
+  when: current_tmux_version.stdout | version_compare(tmux_version, '<')

@@ -1,5 +1,24 @@
 ---
 
+- name: ensure ~/local/bin exists
+  file:
+    path: "{{ ansible_env.HOME }}/local/bin"
+    state: directory
+    mode: 0755
+  tags:
+    - tmux
+    - prezto
+
+- name: ensure ~/local/tmp exists
+  file:
+    path: "{{ ansible_env.HOME }}/local/tmp"
+    state: directory
+    mode: 0755
+  tags:
+    - tmux
+    - prezto
+
+
 - name: ensure prezto is installed if ZSH is present
   include: prezto.yml
   tags: prezto
@@ -17,6 +36,7 @@
   tags: vim
 
 - name: ensure tmux.conf is present
+  tags: tmux
   copy:
     src: tmux.conf
     dest: ~/.tmux.conf
@@ -38,3 +58,8 @@
   include: macos.yml
   tags: macos
   when: ansible_distribution == 'MacOSX'
+
+- name: ensure tmux is installed on linux boxes
+  include: tmux-linux.yml
+  tags: tmux
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
