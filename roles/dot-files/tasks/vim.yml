@@ -1,7 +1,11 @@
 ---
+- name: Set python version for MacOS
+  set_fact:
+    vim_python_command: python3
+  when: ansible_distribution == 'MacOSX'
 
 - name: ensure vimrc is present
-  copy:
+  template:
     src: vimrc
     dest: ~/.vimrc
     mode: 0644

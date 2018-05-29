@@ -11,7 +11,7 @@
   command: "pip --version"
   ignore_errors: true
   changed_when: false # read-only task
-  always_run: true # for check mode
+  check_mode: no
   register: pip_is_installed
 
 - name: ensure pip is installed
@@ -24,8 +24,17 @@
   stat:
     path: "{{ ansible_env.HOME }}/.local/bin/powerline"
   changed_when: false # read-only task
-  always_run: true # for check mode
+  check_mode: no
   register: powerline_installed
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: check if powerline is locally installed (MacOS)
+  stat:
+    path: "{{ ansible_env.HOME }}/Library/Python/2.7/bin/powerline"
+  changed_when: false # read-only task
+  check_mode: no
+  register: powerline_installed
+  when: ansible_distribution == 'MacOSX'
 
 - name: ensure powerline is installed
   pip:
@@ -38,15 +47,16 @@
   stat:
     path: "{{ ansible_env.HOME }}/.local/lib/python2.6/site-packages/argparse.py"
   changed_when: false # read-only task
-  always_run: true # for check mode
+  check_mode: no
   register: argparse_installed
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: ensure powerline dependancy argparse is installed
   pip:
     name: "argparse"
     extra_args: '--ignore-installed --upgrade --user'
     state: present
-  when: argparse_installed.stat.exists == False
+  when: (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and argparse_installed.stat.exists == False
 
 - name: ensure the powerline config file is present
   copy:
@@ -54,3 +64,8 @@
     dest: "{{ ansible_env.HOME }}/.config/powerline/config.json"
     owner: "{{ ansible_user_id }}"
     mode: 0664
+
+- name: Set powerline bindings path for MacOS
+  set_fact:
+    powerline_bindings_path: ~/Library/Python/2.7/lib/python/site-packages/powerline/bindings
+  when: ansible_distribution == 'MacOSX'

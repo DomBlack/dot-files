@@ -1,0 +1,5 @@
+---
+
+tmux_version: 2.6
+vim_python_command: python
+powerline_bindings_path: ~/.local/lib/python2.6/site-packages/powerline/bindings

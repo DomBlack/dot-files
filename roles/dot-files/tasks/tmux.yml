@@ -1,0 +1,18 @@
+---
+
+- name: ensure tmux.conf is present
+  tags: tmux
+  template:
+    src: tmux.conf
+    dest: ~/.tmux.conf
+    mode: 0644
+
+- name: ensure tmux is installed on linux boxes
+  include: tmux-linux.yml
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: ensure tmux is installed on MacOS boxes
+  homebrew: 
+    name: tmux
+    state: present
+  when: ansible_distribution == 'MacOSX'

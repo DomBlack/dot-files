@@ -3,18 +3,18 @@
 - name: read ZSH version
   shell: "zsh --version | awk '{print $2}'"
   changed_when: false # read-only task
-  always_run: true # for check mode
+  check_mode: no
   register: zsh_version
 
 - name: set prezto to master branch if supported
   set_fact:
     prezto_version: master
-  when: zsh_version.stdout | version_compare('4.3.17', '>=')
+  when: zsh_version.stdout is version_compare('4.3.17', '>=')
 
 - name: set prezto to a 4.3.11 supported version
   set_fact:
     prezto_version: zsh-4.3.11
-  when: zsh_version.stdout | version_compare('4.3.17', '<')
+  when: zsh_version.stdout is version_compare('4.3.17', '<')
 
 - name: ensure the prezto repo is cloned
   git:
