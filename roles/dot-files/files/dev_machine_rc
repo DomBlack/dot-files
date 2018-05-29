@@ -8,6 +8,7 @@ compctl -M 'm:{a-z\-}={A-Z\_} r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-
 alias ledgerssh='ledger-agent -s ~/.ssh/ledger.pub'
 alias git='ledger-agent ~/.ssh/ledger.pub -- git'
 alias ssh='ledger-agent ~/.ssh/ledger.pub -- ssh'
+alias ssh-copy-id='ledger-agent ~/.ssh/ledger.pub -- ssh-copy-id'
 alias scp='ledger-agent ~/.ssh/ledger.pub -- scp'
 
 # Allow auto completion on the above three aliases

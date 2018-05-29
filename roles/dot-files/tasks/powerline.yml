@@ -28,6 +28,13 @@
   register: powerline_installed
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+- name: ensure powerline is installed
+  pip:
+    name: powerline-status
+    extra_args: '--ignore-installed --upgrade --user' # upgrade/ignore-installed forces it always into the user directory
+    state: present
+  when: (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and powerline_installed.stat.exists == False
+
 - name: check if powerline is locally installed (MacOS)
   stat:
     path: "{{ ansible_env.HOME }}/Library/Python/2.7/bin/powerline"
@@ -41,7 +48,7 @@
     name: powerline-status
     extra_args: '--ignore-installed --upgrade --user' # upgrade/ignore-installed forces it always into the user directory
     state: present
-  when: powerline_installed.stat.exists == False
+  when: ansible_distribution == 'MacOSX' and powerline_installed.stat.exists == False
 
 - name: check if argparse is locally installed
   stat:
