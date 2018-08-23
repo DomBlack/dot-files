@@ -12,6 +12,6 @@
 	name = Dominic Black
 	email = me@jdm.black
 [push]
-	default = simple
+	default = current
 [branch]
 	autosetuprebase = always

@@ -2,6 +2,6 @@
 
 # ansible-playbook -i inventory site.yml
 
-- hosts: localhost:dev-servers:live-servers
+- hosts: localhost:personal-servers:dev-servers:live-servers
   roles:
     - dot-files

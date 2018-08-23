@@ -44,12 +44,14 @@
     src: gitignore
     dest: ~/.gitignore
     mode: 0644
+  tags: git
 
 - name: ensure global .gitconfig is copied
   copy:
     src: gitconfig
     dest: ~/.gitconfig
     mode: 0644
+  tags: git
 
 - name: ensure MacOS specific tasks are run
   include: macos.yml

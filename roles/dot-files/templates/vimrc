@@ -1,7 +1,7 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
-" execute pathogen#infect()
+" ================ VIM PLugins via vim-plug ====================
 
 " Load vim-plug
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -26,11 +26,16 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'pangloss/vim-javascript'
 
 " VIM colour theme
-" Plug 'altercation/vim-colors-solarized'
 Plug 'tomasr/molokai'
+
+" Ansi Esc colour support
+Plug 'https://github.com/powerman/vim-plugin-AnsiEsc.git'
 
 " Add plugins to &runtimepath
 call plug#end()
+
+" Full update/upgrade command
+command! PU PlugUpdate | PlugUpgrade
 
 " ================ General Config ====================
 
@@ -134,7 +139,10 @@ set hlsearch        " Highlight searches by default
 set ignorecase      " Ignore case when searching...
 set smartcase       " ...unless we type a capital
 
-" Setup powerline
+" Space bar removes searching search
+noremap <silent> <Space> :silent noh<Bar>echo<CR>
+
+" ================ PowerLine ===========================
 set laststatus=2 " Always display the statusline in all windows
 set showtabline=2 " Always display the tabline, even if there is only one tab
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
@@ -143,7 +151,7 @@ set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusl
 {{ vim_python_command }} powerline_setup()
 {{ vim_python_command }} del powerline_setup
 
-" =========================== NERDTree
+" =========================== NERDTree ===========================
 " Toggle NerdTree with Ctrl+N
 map <C-n> :NERDTreeToggle<CR>
 
@@ -165,10 +173,9 @@ set pastetoggle=<F2>
 " =============== Appearance ========================
 set t_Co=256 " Set vim to 256 colour mode
 
-" let g:solarized_termcolors=16
-" let g:solarized_termtrans=1
-" set background=dark
-" colorscheme solarized
-
 colorscheme molokai
 let g:rehash256=1
+
+" =============== Auto Commands Based On File Type ===========================
+
+au bufRead *.log AnsiEsc
