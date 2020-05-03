@@ -1,43 +1,21 @@
-## Dot Files
+# Dot Files
 
-This repo contains my ansible scripts for setitng up machines with my common dot files.
+This repo contains my NixOS dot files
 
-Modify the inventory file as required (by default it only runs against your local machine) and then run the playbook using:
+## Install
 
+1. Add a `dom` user to the base `configuration.nix`
+2. As `dom` run:
 ```bash
-ansible-playbook -i inventory site.yml
-```
+sudo nix-channel --add https://github.com/NixOS/nixos-hardware/archive/master.tar.gz nixos-hardware
+sudo nix-channel --add https://github.com/rycee/home-manager/archive/master.tar.gz home-manager
+sudo nix-channel --update
 
-
-### Mac OS Setup
-
-Once the basic MacOS setup is complete, drop into a shell and run `initialMacOSInstall.sh`
-
-Hyperkey: After running the script, open `Karabiner-Elements` and configure CapsLock to `F18`, start Hammerspoon
-
-#### Alfred iTerm2 Setup
-```
-on alfred_script(q)  
-  tell application "System Events"
-    -- some versions might identify as "iTerm2" instead of "iTerm"
-    set isRunning to (exists (processes where name is "iTerm")) or (exists (processes where name is "iTerm2"))
-  end tell
-  
-  tell application "iTerm"
-    activate
-    set hasNoWindows to ((count of windows) is 0)
-    if isRunning and hasNoWindows then
-      create window with default profile
-    end if
-    select first window
-    
-    tell the first window
-      if isRunning and hasNoWindows is false then
-        create tab with default profile
-      end if
-      tell current session to write text q
-    end tell
-  end tell
-
-end alfred_script
+nix-shell -p git -p vim -p gnumake # To launch a shell with git and vim temporarily installed
+git clone https://github.com/DomBlack/dot-files.git $HOME/dot-files
+cd $HOME/dot-files
+ln -s $(pwd)/home /home/dom/.config/nixpkgs
+sudo mv /etc/nixos/configuration.nix /tmp/
+sudo ln -s $(pwd)/machines/[COMPUTER-NAME].nix /etc/nixos/configuration.nix
+make
 ```
