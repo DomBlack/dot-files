@@ -15,7 +15,7 @@
     htop
     git
     gnupg
-    
+
     # Utils
     gnumake
     unzip
@@ -28,7 +28,7 @@
     enable = true;
     userEmail = "me@jdm.black";
     userName = "Dominic Black";
-    signing.key = "3559716616AA57E6";
+    signing.key = "69E25756E8610BB1";
     signing.signByDefault = true;
 
     extraConfig = {
