@@ -63,8 +63,10 @@ in
 
           radius = 0;
 
-          font-0 = "PragmataPro Mono Liga:size=12;3";
-          font-1 = "PragmataPro Mono Liga:style=Bold:size=12;3";
+          font-0 = "PragmataPro Liga:size=12;3";
+          font-1 = "PragmataPro Liga:size=12;3";
+          font-2 = "FiraCode Nerd Font:antialias=false:size=12;3";
+          #font-1 = "PragmataPro Liga:style=Bold:size=12;3";
 
           modules-left = "distro-icon dulP ddrT i3 dulT";
           modules-center = "title";
@@ -97,8 +99,10 @@ in
           tray-scale = 1;
           padding = 0;
 
-          font-0 = "PragmataPro Mono Liga:size=12;3";
-          font-1 = "PragmataPro Mono Liga:style=Bold:size=12;3";
+          font-0 = "PragmataPro Liga:size=12;3";
+          font-1 = "PragmataPro Liga:size=12;3";
+          font-2 = "FiraCode Nerd Font:antialias=false:size=12;3";
+          #font-1 = "PragmataPro Liga:style=Bold:size=12;3";
           
           modules-left = "powermenu ddlS";
 
@@ -233,7 +237,7 @@ in
           format-background = tertiary;
 
           ws-icon-0 = "1;";
-          ws-icon-1 = "2;";
+          ws-icon-1 = "2;";
           ws-icon-2 = "3;﬏";
           ws-icon-3 = "4;ﭮ";
           ws-icon-4 = "5;";
@@ -262,7 +266,7 @@ in
           label-urgent-foreground = urgency;
           label-urgent-padding = 1;
 
-          label-separator = "";
+          label-separator = " ";
         };
 
         "module/title" = {
@@ -310,7 +314,7 @@ in
           format-disconnected-padding = 2;
           format-disconnected-margin = 0;
           
-          label-connected = " %downspeed:2% |  %upspeed:2%";
+          label-connected = " %downspeed:2%    %upspeed:2%";
           label-disconnected = "DISCONNECTED";
         };
         
@@ -352,7 +356,7 @@ in
 
           label-open = "";
           label-close = "";
-          label-separator = "  ";
+          label-separator = "   ";
 
           menu-0-0 = " Suspend";
           menu-0-0-exec = "systemctl suspend";
@@ -371,56 +375,64 @@ in
 
         "module/dsPT" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = primary;
           content-foreground = tertiary;
         };
 
         "module/dsTS" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = tertiary;
           content-foreground = secondary;
         };
 
         "module/dsST" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = secondary;
           content-foreground = tertiary;
         };
 
         "module/daPT" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = primary;
           content-foreground = tertiary;
         };
 
         "module/daTP" = {
           type = "custom/text";
-          content = "";
+          content = "  ";
+          content-font = 3;
           content-background = tertiary;
           content-foreground = primary;
         };
 
         "module/daST" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = secondary;
           content-foreground = tertiary;
         };
 
         "module/daTS" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = secondary;
           content-foreground = primary;
         };
 
         "module/daSP" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-background = secondary;
           content-foreground = primary;
         };      
@@ -429,84 +441,95 @@ in
 
         "module/dulT" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = tertiary;
           content-background = bg;
         };
 
         "module/ddrT" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = tertiary;
           content-background = bg;
         };
 
         "module/ddlT" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = tertiary;
           content-background = bg;
         };
 
         "module/durT" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = tertiary;
           content-background = bg;
         };
 
         "module/ddlP" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = primary;
           content-background = bg;
         };
 
         "module/durP" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = primary;
           content-background = bg;
         };
 
         "module/dulP" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = primary;
           content-background = bg;
         };
 
         "module/ddrP" = {
           type = "custom/text";
-          content = "";
+          content = " ";
           content-foreground = primary;
           content-background = bg;
         };
 
         "module/dulS" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = secondary;
           content-background = bg;
         };
 
         "module/ddlS" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = secondary;
           content-background = bg;
         };
 
         "module/durS" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = secondary;
           content-background = bg;
         };
 
         "module/ddrS" = {
           type = "custom/text";
-          content = "";
+          content = " ";
+          content-font = 3;
           content-foreground = secondary;
           content-background = bg;
         };

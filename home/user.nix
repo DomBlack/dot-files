@@ -3,7 +3,7 @@
 {
   imports = [
     ./programs/editors/vscode.nix
-    # ./programs/editors/vim.nix
+    ./programs/editors/vim.nix
     ./programs/terminal/alacritty.nix
     ./programs/terminal/kitty.nix
     ./programs/terminal/zsh.nix
@@ -15,9 +15,11 @@
     htop
     git
     gnupg
-
-    # Editors
-    vim
+    
+    # Utils
+    gnumake
+    unzip
+    p7zip
   ];
 
   xsession.numlock.enable = true;

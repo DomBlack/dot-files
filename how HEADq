@@ -1,0 +1,113 @@
+[33mcommit 19654131a6feb19ea18f136c14a752b005d75f4f[m[33m ([m[1;36mHEAD -> [m[1;32mnix-os[m[33m, [m[1;31morigin/nix-os[m[33m)[m
+Author: Dominic Black <me@jdm.black>
+Date:   Mon May 4 21:34:14 2020 +0100
+
+    Added Pragmata Pro to system and switched default terminal to kitty for font ligatures
+
+[33mcommit b76b40f8146cd6618acf7694ad7525333043766f[m
+Author: Dominic Black <me@jdm.black>
+Date:   Sun May 3 20:07:04 2020 +0100
+
+    Initial Nix config migration
+
+[33mcommit 17c4aff2df8d9b57820431645f896996a2406206[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: Dominic Black <me@jdm.black>
+Date:   Thu Aug 23 10:25:08 2018 +0100
+
+    Added AnsiEsc to log files in vim
+
+[33mcommit a799ab5568e5a73817a349729de1321aaf0f62f3[m
+Author: Dominic Black <me@jdm.black>
+Date:   Tue May 29 17:30:22 2018 +0100
+
+    Fixed under linux
+
+[33mcommit 8739cae77c706d5c4da16a32b50222b0b9fd0c89[m
+Author: Dominic Black <me@jdm.black>
+Date:   Tue May 29 16:29:55 2018 +0100
+
+    Updated dot files
+
+[33mcommit c4d8bd284090820747a468cf9dc8e0a4fefafd9c[m
+Author: Dominic Black <me@jdm.black>
+Date:   Tue Feb 27 14:23:14 2018 +0000
+
+    Added IntelliJ Colour Scheme
+
+[33mcommit 9663d120d6ebc5dd7c8e983be82513be672a5faa[m
+Author: Dominic Black <me@jdm.black>
+Date:   Fri Nov 24 16:18:38 2017 +0000
+
+    Made panel border use correct running process
+
+[33mcommit 3caedd67cc17752a2bca00b9428c800685de012f[m
+Author: Dominic Black <me@jdm.black>
+Date:   Fri Nov 24 12:43:39 2017 +0000
+
+    Added takeover alias for tmux
+
+[33mcommit 634126814f157cf02641ea28c1792fb64ac8375f[m
+Author: Dominic Black <me@jdm.black>
+Date:   Fri Nov 24 12:15:39 2017 +0000
+
+    Added task to setup tmux 2.6
+
+[33mcommit 41e0c9732f7dd0336a74aaa6ca6eba520cb0ac7d[m
+Author: Dominic Black <me@jdm.black>
+Date:   Wed Nov 1 11:54:45 2017 +0000
+
+    Added IntelliJ Setup
+
+[33mcommit 6af48ff920def180e32cb4df973882a32a7efd85[m
+Author: Dominic Black <me@jdm.black>
+Date:   Mon Sep 25 15:04:46 2017 +0100
+
+    Got chunkwm working
+
+[33mcommit 25da002e632cef951f4906918c01596fe32f7075[m
+Author: Dominic Black <me@jdm.black>
+Date:   Mon Sep 25 14:38:56 2017 +0100
+
+    Added office to install list
+
+[33mcommit f1105519c458a99b1418907f36c777e1ea1e8613[m
+Author: Dominic Black <me@jdm.black>
+Date:   Mon Sep 25 12:28:49 2017 +0100
+
+    Added MacOS configuration
+
+[33mcommit c0f8877871f87dd68cb0e48d6e18f58cf64dde4e[m
+Author: Dominic Black <me@jdm.black>
+Date:   Mon Oct 3 14:32:42 2016 +0100
+
+    Swapped back to emacs based key bindings
+
+[33mcommit 68e33300125b62bafcc110afafe42d25ff9b8c47[m
+Author: Dominic Black <me@jdm.black>
+Date:   Wed Sep 28 17:15:30 2016 +0100
+
+    Fixed tmux session
+
+[33mcommit fc7257128088f2e45dc41b8b9cacbb567f331aec[m
+Author: Dominic Black <me@jdm.black>
+Date:   Wed Sep 28 16:48:10 2016 +0100
+
+    Ensured vim always starts with my vimrc file, even after su
+
+[33mcommit ee7501e9afbb73ab21f079934f11be1d92e3ad5a[m
+Author: Dominic Black <me@jdm.black>
+Date:   Wed Sep 28 16:32:48 2016 +0100
+
+    Added auto attach to tmux (without creation of new sessions)
+
+[33mcommit 9364b2a6f0da791ca7db7fa5d9434e8e0f084d39[m
+Author: Dominic Black <me@jdm.black>
+Date:   Wed Sep 28 16:00:50 2016 +0100
+
+    Fixed typo in the readme
+
+[33mcommit fd798892785f5c78f36ca716777644ea14397b38[m
+Author: Dominic Black <me@jdm.black>
+Date:   Wed Sep 28 15:57:44 2016 +0100
+
+    Initial commit of dot files

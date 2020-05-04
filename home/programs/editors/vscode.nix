@@ -8,7 +8,7 @@
       "[nix]"."editor.tabSize" = 2;
 
       # Font Settings
-      "editor.fontFamily" = "PragmataPro Mono Liga";
+      "editor.fontFamily" = "PragmataPro Liga";
       "editor.fontLigatures" = true; # Enables >= != to be rendered nicely
       "editor.fontSize" = 14;
 
