@@ -63,8 +63,8 @@ in
 
           radius = 0;
 
-          font-0 = "FuraCode Nerd Font:size=12;3";
-          font-1 = "FuraCode Nerd Font:style=Bold:size=12;3";
+          font-0 = "PragmataPro Mono Liga:size=12;3";
+          font-1 = "PragmataPro Mono Liga:style=Bold:size=12;3";
 
           modules-left = "distro-icon dulP ddrT i3 dulT";
           modules-center = "title";
@@ -97,12 +97,12 @@ in
           tray-scale = 1;
           padding = 0;
 
-          font-0 = "FuraCode Nerd Font:size=12;3";
-          font-1 = "FuraCode Nerd Font:style=Bold:size=12;3";
+          font-0 = "PragmataPro Mono Liga:size=12;3";
+          font-1 = "PragmataPro Mono Liga:style=Bold:size=12;3";
           
           modules-left = "powermenu ddlS";
 
-          modules-right = "ddrS cpu dulS ddrT memory dulT ddrP battery";
+          modules-right = "ddrS cpu dulS ddrT memory dulT ddrP network";
           
           locale = "en_US.UTF-8";
         };
@@ -295,20 +295,22 @@ in
           unknown-as-up = true;
           
           format-connected = "<label-connected>";
-          format-connected-background = mf;
+          format-connected-background = primary;
+          format-connected-foreground = secondary;
           format-connected-underline = bg;
           format-connected-overline = bg;
           format-connected-padding = 2;
           format-connected-margin = 0;
           
           format-disconnected = "<label-disconnected>";
-          format-disconnected-background = mf;
+          format-disconnected-background = primary;
+          format-disconnected-foreground = secondary;
           format-disconnected-underline = bg;
           format-disconnected-overline = bg;
           format-disconnected-padding = 2;
           format-disconnected-margin = 0;
           
-          label-connected = "D %downspeed:2% | U %upspeed:2%";
+          label-connected = " %downspeed:2% |  %upspeed:2%";
           label-disconnected = "DISCONNECTED";
         };
         

@@ -6,6 +6,20 @@
 
     userSettings = {
       "[nix]"."editor.tabSize" = 2;
+
+      # Font Settings
+      "editor.fontFamily" = "PragmataPro Mono Liga";
+      "editor.fontLigatures" = true; # Enables >= != to be rendered nicely
+      "editor.fontSize" = 14;
+
+      "editor.formatOnPaste" = true;
+      "editor.formatOnSave" = true;
+      "editor.cursorBlinking" = "smooth";
+
+      "workbench.editor.highlightModifiedTabs" = true;
+
+      "files.autoSave" = "onWindowChange";
+      "files.trimFinalNewLines" = true;
     };
 
     extensions = [

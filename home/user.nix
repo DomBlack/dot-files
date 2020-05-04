@@ -5,6 +5,7 @@
     ./programs/editors/vscode.nix
     # ./programs/editors/vim.nix
     ./programs/terminal/alacritty.nix
+    ./programs/terminal/kitty.nix
     ./programs/terminal/zsh.nix
     ./hardware/yubikey.nix
   ];
@@ -40,6 +41,6 @@
   home.sessionVariables = {
     EDITOR = "vim";
     BROWSER = "firefox";
-    TERMINAL = "alacritty";
+    TERMINAL = "kitty";
   };
 }

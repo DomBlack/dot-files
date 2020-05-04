@@ -18,10 +18,10 @@
       };
 
       font = {
-        size = 9.0;
+        size = 10.0;
         use_thin_strokes = true;
 
-        # normal.family = "FiraCode Nerd Font";
+        normal.family = "PragmataPro Mono Liga";
         # bold.family = "FiraCode Nerd Font";
         # italic.family = "FiraCode Nerd Font";
       };

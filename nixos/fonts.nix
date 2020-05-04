@@ -15,7 +15,14 @@
       powerline-fonts
       material-icons
       source-code-pro
+      pragamatapro
     ];
   };
+
+  nixpkgs.overlays = [
+    (self: super: {
+      pragamatapro = self.callPackage ./fonts/pragmata-pro.nix { } ;
+    })
+  ];
 }
 
