@@ -13,6 +13,8 @@
 
       lightdm = {
         enable = true;
+        greeters.enso.enable = true;
+        background = "/home/dom/dot-files/files/wallpaper.jpg";
       };
     };
 
@@ -21,9 +23,8 @@
         enable = true;
         
         extraPackages = with pkgs; [
-          dmenu    # application launcher
-          # i3status # default i3 status bar
-          i3lock   # default i3 screen locker
+          dmenu        # application launcher
+          i3lock-fancy
         ];
       };
     };
@@ -48,4 +49,5 @@
 
   # i3: If your settings aren't being saved for some applications (gtk3 applications, firefox), like the size of file selection windows, or the size of the save dialog, you will need to enable dconf
   programs.dconf.enable = true;
+  services.accounts-daemon.enable = true;
 }

@@ -44,7 +44,7 @@ in {
 
         # Set desktop wallpaper
         {
-          command = "${pkgs.feh}/bin/feh --bg-scale ~/Pictures/wallpapers/blue_wolf.jpg";
+          command = "${pkgs.feh}/bin/feh --bg-scale ~/dot-files/files/wallpaper.jpg";
           always = true;
           notification = false;
         }

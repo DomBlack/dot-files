@@ -35,9 +35,11 @@ in
       package = pkgs.polybar.override {
         i3GapsSupport = true;
         alsaSupport = true;
+        githubSupport = true;
+        pulseSupport = true;
       };
 
-      script = "polybar -q -r top & polybar -q -r bottom &";
+      script = "polybar -r top & polybar -r bottom &";
     
       config = {
         "global/wm" = {
@@ -358,12 +360,14 @@ in
           label-close = "";
           label-separator = "   ";
 
-          menu-0-0 = " Suspend";
-          menu-0-0-exec = "systemctl suspend";
-          menu-0-1 = " Reboot";
-          menu-0-1-exec = "systemctl reboot";
-          menu-0-2 = " Shutdown";
-          menu-0-2-exec = "systemctl poweroff";
+          menu-0-0 = " Lock";
+          menu-0-0-exec = "i3-msg exec i3lock-fancy";
+          menu-0-1 = " Logout";
+          menu-0-1-exec = "i3-msg exit";
+          menu-0-2 = " Reboot";
+          menu-0-2-exec = "sudo ${pkgs.systemd}/bin/reboot";
+          menu-0-3 = " Shutdown";
+          menu-0-3-exec = "sudo ${pkgs.systemd}/bin/poweroff";
         };
 
         #"module/wireless-network" = {
