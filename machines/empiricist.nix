@@ -36,11 +36,13 @@
   };
 
   virtualisation.docker.enable = true;
+  programs.zsh.enable = true;
 
   users.users.dom = {
     isNormalUser = true;
     home         = "/home/dom";
     description  = "Dominic Black";
+    shell        = pkgs.zsh;
 
     extraGroups = [ "wheel" "docker" "audio" "networkmanager" ];
 

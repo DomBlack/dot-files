@@ -1,6 +1,10 @@
 # ZSH Setup
 { config, pkgs, ... }:
 {
+  imports = [
+    ./pbcopy-pbpaste.nix
+  ];
+
   programs.zsh = {
     enable = true;
     enableAutosuggestions = true;

@@ -7,6 +7,7 @@
     ./programs/terminal/alacritty.nix
     ./programs/terminal/kitty.nix
     ./programs/terminal/zsh.nix
+    ./roles/dev/golang.nix
     ./hardware/yubikey.nix
   ];
 
