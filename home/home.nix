@@ -3,7 +3,9 @@
 # Stuff on this file, and ./home/*.nix, should work across all of my computing
 # devices.
 { config, pkgs, ... }:
-{
+let
+  nur = import ../nur { inherit pkgs; };
+in {
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards

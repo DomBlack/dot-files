@@ -21,6 +21,7 @@
     gnumake
     unzip
     p7zip
+    libnotify # Allow desktop notifications
   ];
 
   xsession.numlock.enable = true;
