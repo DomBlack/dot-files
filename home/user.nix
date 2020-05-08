@@ -8,6 +8,7 @@
     ./programs/terminal/kitty.nix
     ./programs/terminal/zsh.nix
     ./roles/dev/golang.nix
+    ./roles/dev/javascript.nix
     ./hardware/yubikey.nix
   ];
 
