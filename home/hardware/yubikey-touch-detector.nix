@@ -1,27 +1,34 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.services.yubikey-touch-detector;
+  # cfg = config.services.yubikeyTouchDetector;
   nur = import ../../nur { inherit pkgs; };
 in {
-  options = {
-    service.yubikey-touch-detector = {
-      enable = mkEnableOption "Yubikey Touch Detector";
-    };
-  };
+  # options = {
+  #   service.yubikeyTouchDetector = {
+  #     enable = mkEnableOption "Yubikey Touch Detector";
+  #   };
+  # };
 
-  config = mkIf cfg.enable {
-    home.pacakges = [ nur.yubikey-touch-detector ];
+  # config = mkIf cfg.enable {
+  #   # home.pacakges = [ nur.yubikey-touch-detector ];
 
-    systemd.services.yubikey-touch-detector = {
-      description = "Detects when your YubiKey is waiting for a touch";
-      wantedBy    = [ "default.target" ];
+    config = {
+      systemd.user.services."yubikey-touch-detector" = {
+      Unit = {
+        Description = "Detects when your YubiKey is waiting for a touch";
+        PartOf = [ "graphical-session.target" ];
+      };
 
       Service = {
-        Type = "forking";
+        Type = "simple";
         ExecStart = "${nur.yubikey-touch-detector}/bin/yubikey-touch-detector";
+        Environment = "PATH=${config.home.profileDirectory}/bin";
         Restart = "on-failure";
-        # EnvironmentFile = "-%E/yubikey-touch-detector/service.conf";
+      };
+
+      Install = {
+        WantedBy = [ "default.target" ];
       };
     };
   };

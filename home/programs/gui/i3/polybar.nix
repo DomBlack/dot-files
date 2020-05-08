@@ -27,6 +27,22 @@ let
 
   # Red
   urgency = "#e74c3c";
+
+  yubikeyScript = pkgs.writeShellScript "yubikey-status-bar" ''
+#!${pkgs.bash}/bin/bash
+
+trap '${pkgs.procps}/bin/pkill -P $$' EXIT
+
+${pkgs.netcat}/bin/nc -U /run/user/1000/yubikey-touch-detector.socket | while read -n5 cmd; do
+    if [ "''${cmd:4:1}" = "0" ]; then
+        echo ""
+        # printf '  \n'
+    else
+        tooltip="Yubikey is waiting for a touch, reason: ''${cmd:0:3}"
+        printf ' %s\n' "$tooltip"
+    fi
+done
+'';
 in
   {
     services.polybar = { 
@@ -70,11 +86,11 @@ in
           font-2 = "FiraCode Nerd Font:antialias=false:size=12;3";
           #font-1 = "PragmataPro Liga:style=Bold:size=12;3";
 
-          modules-left = "distro-icon dulP ddrT i3 dulT";
+          modules-left = "distro-icon dulP ddrT i3 dulT yubikey";
           modules-center = "title";
           modules-right = "durT audio ddlT date";
 
-          locale = "en_US.UTF-8";
+          locale = "en_GB.UTF-8";
         };
 
         "bar/bottom" = {
@@ -110,7 +126,7 @@ in
 
           modules-right = "ddrS cpu dulS ddrT memory dulT ddrP network";
           
-          locale = "en_US.UTF-8";
+          locale = "en_GB.UTF-8";
         };
 
         "settings" = {
@@ -374,6 +390,19 @@ in
         #  type = "internal/network";
         #  interval = "wlp2s0";
         #};
+
+        "module/yubikey" = {
+          type = "custom/script";
+          exec = "${pkgs.bash}/bin/bash ${yubikeyScript}";
+          tail = true;
+
+          format = "<label>";
+          # format-background = secondary;
+          # format-foreground = secondary;
+          format-padding = 1;
+          label = "%output%";
+          label-font = 2;
+        };
 
   #--------------------SOLID TRANSITIONS--------------------#
 

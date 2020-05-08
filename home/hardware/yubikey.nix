@@ -3,7 +3,7 @@
 #   nur = import ../../nur { inherit pkgs; };
 # in {
 {
-  # imports = [ ./yubikey-touch-detector.nix ];
+  imports = [ ./yubikey-touch-detector.nix ];
 
   home.packages = with pkgs; [
     yubikey-manager
