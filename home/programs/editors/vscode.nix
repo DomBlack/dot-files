@@ -20,6 +20,7 @@
 
       "files.autoSave" = "onWindowChange";
       "files.trimFinalNewLines" = true;
+      "files.trimTrailingWhitespace" = true;
     };
 
     extensions = [

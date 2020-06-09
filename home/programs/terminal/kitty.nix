@@ -11,6 +11,7 @@
     settings = {
       shell = "zsh";
       editor = "vim";
+      term = "xterm-256color";
 
       font_family = "PragmataPro Mono Liga";
       font_size = 12;

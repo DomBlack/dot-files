@@ -9,6 +9,8 @@
     ./programs/terminal/zsh.nix
     ./roles/dev/golang.nix
     ./roles/dev/javascript.nix
+    ./roles/dev/ctf.nix
+    ./roles/dev/k8s.nix
     ./hardware/yubikey.nix
   ];
 
@@ -23,6 +25,11 @@
     unzip
     p7zip
     libnotify # Allow desktop notifications
+    scrot     # Screenshot Util
+
+    #
+    discord
+    spotify
   ];
 
   xsession.numlock.enable = true;

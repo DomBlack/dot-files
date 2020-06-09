@@ -3,6 +3,6 @@
 {
   home.packages = with pkgs; [
     nodejs
-    pkgs.jetbrains.webstorm # IDE
+    pkgs.jetbrains.webstorm
   ];
 }

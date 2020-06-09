@@ -22,7 +22,7 @@ in {
       modifier = mod;
 
       window.border = 0;
-      
+
       gaps = {
         inner = 15;
         outer = 5;
@@ -30,6 +30,7 @@ in {
 
       keybindings = lib.mkOptionDefault {
         "${mod}+d" = "exec ${pkgs.rofi}/bin/rofi -show drun -show-icons -drun-icon-theme";
+        "Print" = "exec ${pkgs.scrot}/bin/scrot '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/'";
       };
 
       bars = [];
