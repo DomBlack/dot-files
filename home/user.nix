@@ -41,13 +41,13 @@
     signing.key = "69E25756E8610BB1";
     signing.signByDefault = true;
 
-    extraConfig = {
-      url = {
-        "git@github.com:" = {
-          insteadOf = "https://github.com/";
-        };
-      };
-    };
+    # extraConfig = {
+    #   url = {
+    #     "git@github.com:" = {
+    #       insteadOf = "https://github.com/";
+    #     };
+    #   };
+    # };
   };
 
   home.sessionVariables = {

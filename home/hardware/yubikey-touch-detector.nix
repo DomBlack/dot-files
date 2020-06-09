@@ -17,6 +17,8 @@ in {
       systemd.user.services."yubikey-touch-detector" = {
       Unit = {
         Description = "Detects when your YubiKey is waiting for a touch";
+        After = [ "graphical-session-pre.target" ];
+        Before = [ "polybar.target" ];
         PartOf = [ "graphical-session.target" ];
       };
 
@@ -28,7 +30,7 @@ in {
       };
 
       Install = {
-        WantedBy = [ "default.target" ];
+        WantedBy = [ "graphical-session.target" "polybar.target" ];
       };
     };
   };
