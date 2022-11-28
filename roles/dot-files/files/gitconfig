@@ -13,5 +13,7 @@
 	email = me@jdm.black
 [push]
 	default = current
+[fetch]
+	prune = true
 [branch]
 	autosetuprebase = always
