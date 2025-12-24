@@ -1,0 +1,26 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# This script runs when fish_plugins changes
+# fish_plugins hash: {{ include "private_dot_config/private_fish/fish_plugins" | sha256sum }}
+
+set -e
+
+echo "🐟 Fish plugins have changed, running fisher update..."
+
+# Check if fish and fisher are available
+if ! command -v fish &> /dev/null; then
+    echo "⚠️  Fish shell is not installed yet, skipping fisher update"
+    exit 0
+fi
+
+if ! fish -c "type -q fisher" &> /dev/null; then
+    echo "⚠️  Fisher is not installed yet, skipping fisher update"
+    exit 0
+fi
+
+# Run fisher update
+fish -c "fisher update"
+
+echo "✅ Fisher plugins updated successfully"
+{{ end -}}
+
