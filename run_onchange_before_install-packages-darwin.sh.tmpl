@@ -1,0 +1,40 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+brew bundle --file=/dev/stdin <<EOF
+# =============================================================================
+# Core Shell
+# =============================================================================
+brew "fish"                     # The friendly interactive shell
+brew "starship"                 # Cross-shell prompt
+brew "fisher"                   # Fish plugin manager (run: fisher update after install)
+
+# =============================================================================
+# Modern CLI Replacements
+# =============================================================================
+brew "htop"                     # Better top
+brew "eza"                      # Modern ls replacement (colors, icons, git status)
+brew "bat"                      # cat with syntax highlighting
+brew "fd"                       # Modern find replacement
+brew "ripgrep"                  # Modern grep replacement (rg)
+brew "fzf"                      # Fuzzy finder (Ctrl+R history, file search)
+brew "zoxide"                   # Smarter cd that learns your habits
+brew "tlrc"                     # TLDR client (better man pages)
+brew "git-delta"                # Better git diffs
+brew "terminal-notifier"        # Better notifications
+
+# =============================================================================
+# Node.js and JavaScript
+# =============================================================================
+brew "nvm"                      # Node Version Manager
+
+# =============================================================================
+# Casks
+# =============================================================================
+cask "ghostty"                  # Terminal emulator
+cask "1password"                # Password manager
+cask "1password-cli"            # Password manager CLI
+cask "alfred"                   # Spotlight replacement
+
+EOF
+{{ end -}}

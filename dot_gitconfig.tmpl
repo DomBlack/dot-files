@@ -1,0 +1,170 @@
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[commit]
+	gpgsign = true
+[user]
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
+	name = Dominic Black
+	email = {{ .email }}
+[github]
+	user = domblack
+[branch]
+	autosetuprebase = always
+[color]
+ 	branch = auto
+	diff = auto
+	interactive = auto
+ 	status = auto
+ 	ui = true
+[push]
+	default = current
+[fetch]
+	prune = true
+[core]
+	excludesfile = {{ .chezmoi.homeDir }}/.gitignore
+	quotepath = false
+	editor = code --wait
+	pager = delta
+
+[alias]
+    # Safely switch to main branch after fetching latest changes
+    main = "!sh -c ' \
+        if ! git diff-index --quiet HEAD --; then \
+            echo \"You have uncommitted changes. Please commit or stash them before switching to main.\"; \
+            exit 1; \
+        fi; \
+        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD); \
+        git fetch origin main:main --update-head-ok && \
+        if [ \"$CURRENT_BRANCH\" = \"main\" ]; then \
+            git reset --hard origin/main; \
+        else \
+            git switch main; \
+        fi \
+    ' -"
+
+    # Create a new branch from the latest main, handling uncommitted changes
+    new = "!sh -c '\
+      USAGE=\"Usage: git new [-s|--stash|-c|--commit] <branch-name>\"; \
+      ACTION=\"\"; \
+      while [ $# -gt 0 ]; do \
+          case \"$1\" in \
+              -s|--stash) \
+                  ACTION=\"stash\"; \
+                  shift ;; \
+              -c|--commit) \
+                  ACTION=\"commit\"; \
+                  shift ;; \
+              -h|--help) \
+                  echo \"$USAGE\"; \
+                  exit 0 ;; \
+              *) \
+                  if [ -z \"$BRANCH_NAME\" ]; then \
+                      BRANCH_NAME=\"$1\"; \
+                      shift; \
+                  else \
+                      echo \"Unknown option: $1\"; \
+                      echo \"$USAGE\"; \
+                      exit 1; \
+                  fi ;; \
+          esac; \
+      done; \
+      if [ -z \"$BRANCH_NAME\" ]; then \
+          echo \"$USAGE\"; \
+          exit 1; \
+      fi; \
+      CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null); \
+      if [ $? -ne 0 ]; then \
+          echo \"Not currently on any branch.\"; \
+          exit 1; \
+      fi; \
+      NEEDS_POP=0; \
+      if ! git diff-index --quiet HEAD --; then \
+          if [ -z \"$ACTION\" ]; then \
+              if [ \"$CURRENT_BRANCH\" = \"main\" ]; then \
+                  echo \"Stashing changes from main to move to new branch...\"; \
+                  ACTION=\"stash\"; \
+              else \
+                  echo \"You have uncommitted changes on $CURRENT_BRANCH\"; \
+                  read -r -p \"Do you want to (s)tash and move them or (c)ommit them to $CURRENT_BRANCH? [s/c]: \" choice; \
+                  case \"$choice\" in \
+                      s|S) ACTION=\"stash\" ;; \
+                      c|C) ACTION=\"commit\" ;; \
+                      *) echo \"Invalid choice. Aborting.\"; exit 1 ;; \
+                  esac; \
+              fi; \
+          fi; \
+          if [ \"$ACTION\" = \"stash\" ]; then \
+              echo \"Stashing changes to move to new branch\"; \
+              git stash push -m \"temp_move_to_new_branch\" || { echo \"Failed to stash changes.\"; exit 1; }; \
+              NEEDS_POP=1; \
+          elif [ \"$ACTION\" = \"commit\" ]; then \
+              echo \"Committing changes to $CURRENT_BRANCH\"; \
+              git add -A && \
+              git commit -m \"WIP: Changes before switching to new branch\" --no-verify || { echo \"Failed to commit changes.\"; exit 1; }; \
+          else \
+              echo \"No action specified for uncommitted changes.\"; \
+              exit 1; \
+          fi; \
+      fi; \
+      git main || { echo \"Failed to switch to main.\"; exit 1; }; \
+      git checkout -b \"$BRANCH_NAME\" || { echo \"Failed to create new branch $BRANCH_NAME.\"; exit 1; }; \
+      if [ \"$NEEDS_POP\" = \"1\" ]; then \
+          echo \"Restoring changes on new branch\"; \
+          git stash pop || { echo \"Failed to apply stashed changes.\"; exit 1; }; \
+      fi; \
+      echo \"Created new branch $BRANCH_NAME from latest main.\"; \
+    ' -"
+
+
+    # Clean up local branches that were tracking remote branches which no longer exist
+	cleanup = "!sh -c '\
+            echo \"Fetching latest changes and pruning remote-tracking branches...\"; \
+            git fetch --all --prune; \
+            echo; \
+            echo \"Removing local branches whose remote has been deleted:\"; \
+                git branch -vv | awk \"/: gone]/{print \\$1}\" | while read branch; do \
+                    echo \"Removing branch: $branch\"; \
+                    git branch -D \"$branch\"; \
+                done; \
+            echo; \
+            echo \"Removing local branches that have been merged into main:\"; \
+                git branch --merged main | egrep -v \"(^\\\\*|main$)\" | while read branch; do \
+                    echo \"Removing branch: $branch\"; \
+                    git branch -d \"$branch\"; \
+                done; \
+            echo; \
+            echo \"Removing local branches that have been merged via PRs...\"; \
+                gh pr list --state merged --limit 1000 --json headRefName --jq \".[].headRefName\" | while read branch; do \
+                    if git show-ref --verify --quiet refs/heads/$branch; then \
+                        echo \"Deleting local branch: $branch\"; \
+                        git branch -D \"$branch\"; \
+                    fi; \
+                done; \
+            echo; \
+            echo \"Cleanup complete!\"; \
+        ' -"
+
+    # Open a pull request on GitHub
+    openpr = "!f() { \
+            if ! git diff-index --quiet HEAD --; then \
+                echo 'You have uncommitted changes.'; \
+                git add -A && git commit || { echo 'Failed to commit changes.'; exit 1; }; \
+            fi; \
+            branch=$(git symbolic-ref --short HEAD); \
+            git push -u origin \"$branch\" || { echo 'Failed to push the branch.'; exit 1; }; \
+            gh pr create --web || { echo 'Failed to create a pull request.'; exit 1; }; \
+        }; f"
+
+	# Show recently checked out branches with dates
+	recent = "!sh -c 'git reflog --date=relative | \
+        grep \"checkout: moving from\" | \
+        head -n 10 | \
+        perl -pe \"s/.*?moving from (\\S+) to (\\S+).*?\\{(.*?)\\}/printf(\\\"%-20s -> %-20s (%s)\\\\n\\\", \\$1, \\$2, \\$3)/e\"'"
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+[merge]
+	conflictStyle = zdiff3

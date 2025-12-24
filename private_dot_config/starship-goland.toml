@@ -1,0 +1,284 @@
+# version: 1.0.0
+# Starship config optimized for Fish 4.0
+
+### See https://fabrizioschiavi.github.io/pragmatapro-semiotics/ for icons
+
+# Performance optimizations
+command_timeout = 750 # milliseconds
+scan_timeout = 100    # milliseconds for faster startup
+
+add_newline = true
+continuation_prompt = "[▸▹ ](dimmed white)"
+
+# Simplified format for better performance
+format = """
+$username at $hostname in $directory\
+( \\($git_branch($git_status)$git_state\\))
+$cmd_duration$jobs$sudo$character"""
+
+right_format = """$time"""
+
+# Add this to detect GoLand and override the right_format
+[env_var.TERM_PROGRAM]
+variable = "TERM_PROGRAM"
+default = ""
+format = "$env_value"
+
+# Or use another environment variable that might identify GoLand
+[env_var.TERMINAL_EMULATOR]
+variable = "TERMINAL_EMULATOR"
+default = ""
+format = "$env_value"
+
+[fill]
+symbol = ' '
+
+[character]
+format = "\\$ "
+success_symbol = "[\\$](green) "
+error_symbol = "[\\$](red) "
+vimcmd_symbol = "[V](green) "
+# format = "$symbol"
+# # not supported in zsh
+# vimcmd_replace_one_symbol = "◌"
+# vimcmd_replace_symbol = "□"
+# vimcmd_visual_symbol = "▼"
+
+[env_var.VIMSHELL]
+format = "[$env_value]($style)"
+style = 'green italic'
+
+[sudo]
+format = "[$symbol]($style)"
+style = "bold italic bright-purple"
+symbol = "⋈┈"
+disabled = false
+
+[username]
+style_user = "purple"
+style_root = "red bold"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+style = "red"
+format = "[$hostname]($style)"
+
+[directory]
+truncation_length = 3
+truncation_symbol = '…/'
+truncate_to_repo = true
+fish_style_pwd_dir_length = 1
+style = "green"
+format = '[$path]($style)'
+repo_root_style = 'bright-green bold'
+repo_root_format = '[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style)'
+read_only = " 🔒"
+
+[cmd_duration]
+format = "[took $duration]($style) "
+style = "yellow"
+min_time = 2000
+show_milliseconds = false
+
+[jobs]
+threshold = 1
+symbol_threshold = 1
+
+[localip]
+ssh_only = true
+format = " ◯[$localipv4](bold magenta)"
+disabled = false
+
+[time]
+disabled = false
+format = "[ $time]($style)"
+time_format = "%H:%M"
+style = "dimmed white"
+
+[battery]
+format = "[$percentage$symbol]($style)"
+full_symbol = "󱊣"
+charging_symbol = "[↑](italic bold green)"
+discharging_symbol = "↓"
+unknown_symbol = "󱃍"
+empty_symbol = "󱊡"
+
+[[battery.display]]
+threshold = 20
+style = "italic bold red"
+
+[[battery.display]]
+threshold = 60
+style = "italic dimmed bright-purple"
+
+[[battery.display]]
+threshold = 70
+style = "italic dimmed yellow"
+
+[git_branch]
+format = '[$branch]($style)'
+style = "cyan"
+truncation_symbol = "⋯"
+only_attached = true
+
+[git_metrics]
+format = '([+$added]($added_style))([-$deleted]($deleted_style))'
+added_style = 'bold green'
+deleted_style = 'bold red'
+ignore_submodules = true
+disabled = false
+
+[git_status]
+format = '([$all_status$ahead_behind]($style))'
+modified = "[●](bold red)"
+staged = "[●](bold bright-green)"
+ahead = ""                                      #"⇡${count}"
+behind = ""                                     #"⇣${count}"
+diverged = ""                                   #"⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = ""
+deleted = "✘"
+renamed = "»"
+
+[deno]
+format = " [deno](italic) [∫$version](green bold)"
+version_format = "${raw}"
+
+[lua]
+format = " [${symbol}${version}]($style)"
+version_format = "${raw}"
+symbol = "󰢱"
+style = "bold bright-yellow"
+
+[nodejs]
+format = " [${symbol}${version}]($style)"
+style = "bold blue"
+version_format = "${raw}"
+symbol = "󰎙"
+detect_files = ["package-lock.json", "yarn.lock"]
+detect_folders = ["node_modules"]
+detect_extensions = []
+
+[python]
+format = " [${symbol}${version}]($style)"
+symbol = "󰌠"
+version_format = "${raw}"
+style = "bold bright-yellow"
+
+[ruby]
+format = " [rb](italic) [${symbol}${version}]($style)"
+symbol = "󰴭"
+version_format = "${raw}"
+style = "bold red"
+
+[rust]
+format = " [$symbol$version]($style)"
+symbol = ""
+version_format = "${raw}"
+style = "bold red"
+
+[package]
+format = " [pkg](italic dimmed) [$symbol$version]($style)"
+version_format = "${raw}"
+symbol = "◨"
+style = "dimmed yellow italic bold"
+
+[swift]
+format = " [${symbol}${version}]($style)"
+symbol = "󰛥"
+style = "bold bright-red"
+version_format = "${raw}"
+
+[aws]
+# disabled = true
+format = " [$symbol($profile)$region($duration)]($style)"
+style = "bold dimmed red"
+symbol = "󰸏"
+expiration_symbol = "[󰸏](red)"
+
+[gcloud]
+# disabled = true
+format = " [$symbol($profile)($region)($domain)]($style)"
+style = "bold dimmed yellow"
+symbol = "󱇶"
+
+[buf]
+symbol = "󰿘"
+format = " [$symbol$version$buf_version]($style)"
+
+[c]
+symbol = "󰙱"
+format = " [$symbol($version(-$name))]($style)"
+
+[conda]
+symbol = "◯"
+format = " conda [$symbol$environment]($style)"
+
+[dart]
+symbol = "◁◅"
+format = " dart [$symbol($version)]($style)"
+
+[docker_context]
+symbol = "◧"
+format = " docker [$symbol$context]($style)"
+
+[elixir]
+symbol = "△"
+format = " exs [$symbol$version OTP $otp_version]($style)"
+
+[elm]
+symbol = "◩"
+format = " elm [$symbol($version)]($style)"
+
+[golang]
+symbol = ""
+format = " [$symbol($version)]($style)"
+
+[haskell]
+symbol = "󰲒"
+format = " [$symbol($version)]($style)"
+
+[java]
+format = " [$symbol$(version)](bright-red)"
+symbol = "󰬷"
+version_format = "${major}.${minor}"
+detect_extensions = ["java", "class", "jar"]
+
+[julia]
+symbol = "◎"
+format = " jl [$symbol($version)]($style)"
+
+[memory_usage]
+threshold = 75
+format = " ${ram}"
+style = "bold dimmed white"
+disabled = false
+
+[nim]
+symbol = "▴▲▴"
+format = " nim [$symbol($version)]($style)"
+
+[nix_shell]
+style = 'bold italic dimmed blue'
+symbol = '✶'
+format = '[$symbol nix⎪$state⎪]($style) [$name](italic dimmed white)'
+impure_msg = '[⌽](bold dimmed red)'
+pure_msg = '[⌾](bold dimmed green)'
+unknown_msg = '[◌](bold dimmed ellow)'
+
+[spack]
+symbol = "◇"
+format = " spack [$symbol$environment]($style)"
+
+# Add a custom command to check the terminal and set right_format conditionally
+[custom.right_format_toggle]
+command = """
+if [[ "$TERM_PROGRAM" == "GoLand" ]] || [[ "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
+  echo "disabled"
+fi
+"""
+when = true
+format = "$output"

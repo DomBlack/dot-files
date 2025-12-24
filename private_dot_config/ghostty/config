@@ -1,0 +1,62 @@
+auto-update = download
+auto-update-channel = stable
+
+clipboard-trim-trailing-spaces = true
+mouse-hide-while-typing = true
+
+################################################################
+# Setup the font; see https://fsd.it/pragmatapro/Handbook.png
+################################################################
+
+font-family = PragmataPro Mono Liga
+font-feature = +calt # main programming symbols as ligatures
+font-feature = +ss13 # Git tree support
+font-feature = +ss15 # '[BUG]' etc rendering as filled in rounded pills
+font-feature = +ss18 # '# BUG' etc rendering as filled in pengations
+
+font-size = 13
+
+
+################################################################
+# Setup the theme
+################################################################
+
+# Run "ghostty +list-themes" to list all themes
+theme = "iTerm2 Default"
+background-opacity = 0.85
+background-blur = true
+window-theme = dark
+window-padding-x = 10
+window-padding-y = 10
+
+link-url = true
+
+focus-follows-mouse = true
+
+# (hidden is the other option)
+macos-window-buttons = "visible"
+macos-hidden = "never"
+macos-auto-secure-input = true
+macos-secure-input-indication = true
+macos-icon = xray
+
+desktop-notifications = true
+
+################################################################
+# Setup the Quake Console
+################################################################
+
+keybind = global:cmd+§=toggle_quick_terminal
+quick-terminal-screen = mouse
+quick-terminal-autohide = true
+quick-terminal-space-behavior = move
+quick-terminal-position = top
+quick-terminal-size = 35%
+quick-terminal-keyboard-interactivity = on-demand
+
+################################################################
+# Setup the Shell
+################################################################
+
+shell-integration = fish
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
