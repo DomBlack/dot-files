@@ -1,4 +1,6 @@
-cli completion fish | source # Avian labs CLI
+{{ if .isWorkMachine }}
+    cli completion fish | source # Avian labs CLI
+{{ end }}
 
 if test "$TERMINAL_EMULATOR" = "JetBrains-JediTerm"
     set -x STARSHIP_CONFIG ~/.config/starship-goland.toml

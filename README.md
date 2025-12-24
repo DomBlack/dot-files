@@ -30,7 +30,7 @@ This will clone the repo and apply all dotfiles. The install script will automat
 
 ### Daily Commands
 
-- `chezmoi apply`; applies changes from source to home
+- `chezmoi apply --init`; applies changes from source to home asking new questions if needed
 - `chezmoi diff`; shows what would change
 - `chezmoi update`; pulls latest from repo and applies
 

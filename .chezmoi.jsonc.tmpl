@@ -1,0 +1,9 @@
+{{ $email := promptStringOnce . "email" "What is your email address" }}
+{{ $isWorkMachine := promptBoolOnce . "isWorkMachine" "Is this a work machine?" }}
+
+{
+    "data": {
+        "email": "{{ $email }}",
+        "isWorkMachine": {{ $isWorkMachine }},
+    }
+}
