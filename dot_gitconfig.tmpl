@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "darwin" -}}
 [gpg]
 	format = ssh
 [gpg "ssh"]
@@ -8,6 +9,13 @@
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
 	name = Dominic Black
 	email = {{ .email }}
+{{ else -}}
+[commit]
+	gpgsign = false
+[user]
+	name = Dominic Black
+	email = {{ .email }}
+{{ end -}}
 [github]
 	user = domblack
 [branch]

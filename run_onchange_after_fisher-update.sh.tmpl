@@ -1,4 +1,4 @@
-{{- if eq .chezmoi.os "darwin" -}}
+{{- if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") -}}
 #!/bin/bash
 # This script runs when fish_plugins changes
 # fish_plugins hash: {{ include "private_dot_config/private_fish/fish_plugins" | sha256sum }}

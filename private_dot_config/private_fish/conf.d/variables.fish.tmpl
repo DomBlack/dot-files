@@ -9,5 +9,9 @@ set -gx XDG_MUSIC_DIR $HOME/Music
 set -gx XDG_PICTURES_DIR $HOME/Pictures
 set -gx XDG_VIDEOS_DIR $HOME/Videos
 
-# set the Default Editor use code, code-insiders, nvim, windsurf, or cursor
+# set the Default Editor
+{{ if eq .chezmoi.os "darwin" -}}
 set -gx EDITOR cursor
+{{ else -}}
+set -gx EDITOR vim
+{{ end -}}
