@@ -2,10 +2,8 @@
 # Bootstrap script for Coder (Linux cloud dev environments).
 # Non-interactive and idempotent — safe to re-run.
 #
-# Required env vars:
-#   CHEZMOI_EMAIL          — git commit email (no default, keeps work email out of repo)
-#
 # Optional env vars:
+#   CHEZMOI_EMAIL           — git commit email (default: me@dom-black.co.uk)
 #   CHEZMOI_IS_WORK_MACHINE — default: true
 
 set -euo pipefail
@@ -13,13 +11,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ---------------------------------------------------------------------------
-# Validate required env vars
+# Defaults
 # ---------------------------------------------------------------------------
-if [ -z "${CHEZMOI_EMAIL:-}" ]; then
-  echo "ERROR: CHEZMOI_EMAIL must be set (e.g. export CHEZMOI_EMAIL=you@example.com)"
-  exit 1
-fi
-
+CHEZMOI_EMAIL="${CHEZMOI_EMAIL:-me@dom-black.co.uk}"
 CHEZMOI_IS_WORK_MACHINE="${CHEZMOI_IS_WORK_MACHINE:-true}"
 
 # ---------------------------------------------------------------------------
