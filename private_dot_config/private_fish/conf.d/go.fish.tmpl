@@ -6,9 +6,12 @@ set -gx GOPRIVATE (string join "," \
 )
 
 # Build flags for faster compilation
-# -gcflags="all=-N -l": Disable optimizations (-N) and inlining (-l) for faster builds
+# -gcflags 'all=-N -l': Disable optimizations (-N) and inlining (-l) for faster builds
+#   Note: these must be combined in a single -gcflags flag; separate flags override each other
 # -trimpath: Remove local file paths from binaries for reproducible builds
-set -gx GOFLAGS "-gcflags=all=-N -gcflags=all=-l -trimpath"
+# Go's GOFLAGS parser only respects quotes that wrap the entire element,
+# so the single quotes must enclose the full flag including its name.
+set -gx GOFLAGS "'-gcflags=all=-N -l' -trimpath"
 
 {{ if and (eq .chezmoi.os "darwin") (eq .chezmoi.arch "arm64") -}}
 # Generate code optimized for Apple Silicon M3 (ARMv8.6-A architecture)

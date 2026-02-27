@@ -272,13 +272,3 @@ unknown_msg = '[◌](bold dimmed ellow)'
 [spack]
 symbol = "◇"
 format = " spack [$symbol$environment]($style)"
-
-# Add a custom command to check the terminal and set right_format conditionally
-[custom.right_format_toggle]
-command = """
-if [[ "$TERM_PROGRAM" == "GoLand" ]] || [[ "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
-  echo "disabled"
-fi
-"""
-when = true
-format = "$output"
