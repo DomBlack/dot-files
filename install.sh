@@ -13,7 +13,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ---------------------------------------------------------------------------
 # Defaults
 # ---------------------------------------------------------------------------
-CHEZMOI_EMAIL="${CHEZMOI_EMAIL:-me@dom-black.co.uk}"
+if [ -z "${CHEZMOI_EMAIL:-}" ]; then
+  if [ "$(uname)" = "Linux" ] && [ "$(whoami)" = "devuser" ]; then
+    CHEZMOI_EMAIL="dom@avianlabs.net"
+  else
+    echo "ERROR: CHEZMOI_EMAIL must be set" >&2
+    exit 1
+  fi
+fi
 CHEZMOI_IS_WORK_MACHINE="${CHEZMOI_IS_WORK_MACHINE:-true}"
 
 # ---------------------------------------------------------------------------

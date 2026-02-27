@@ -10,4 +10,8 @@ if ! grep -Fxq "$FISH" /etc/shells; then
 fi
 
 # Switch login shell if not already fish
-[ "$SHELL" = "$FISH" ] || chsh -s "$FISH"
+if [ "$(uname)" = "Linux" ] && [ "$(whoami)" = "devuser" ]; then
+  [ "$SHELL" = "$FISH" ] || sudo chsh -s "$FISH" devuser
+else
+  [ "$SHELL" = "$FISH" ] || chsh -s "$FISH"
+fi
