@@ -3,8 +3,9 @@
 # Non-interactive and idempotent — safe to re-run.
 #
 # Optional env vars:
-#   CHEZMOI_EMAIL           — git commit email (default: me@dom-black.co.uk)
-#   CHEZMOI_IS_WORK_MACHINE — default: true
+#   CHEZMOI_EMAIL              — git commit email (default: me@dom-black.co.uk)
+#   CHEZMOI_IS_WORK_MACHINE    — default: true
+#   CHEZMOI_IS_REMOTE_DEV_BOX  — default: true if devuser, false otherwise
 
 set -euo pipefail
 
@@ -22,6 +23,14 @@ if [ -z "${CHEZMOI_EMAIL:-}" ]; then
   fi
 fi
 CHEZMOI_IS_WORK_MACHINE="${CHEZMOI_IS_WORK_MACHINE:-true}"
+
+if [ -z "${CHEZMOI_IS_REMOTE_DEV_BOX:-}" ]; then
+  if [ "$(uname)" = "Linux" ] && [ "$(whoami)" = "devuser" ]; then
+    CHEZMOI_IS_REMOTE_DEV_BOX="true"
+  else
+    CHEZMOI_IS_REMOTE_DEV_BOX="false"
+  fi
+fi
 
 # ---------------------------------------------------------------------------
 # 1. Install chezmoi
@@ -46,6 +55,7 @@ if [ ! -f "$CHEZMOI_CONFIG_FILE" ]; then
     "data": {
         "email": "${CHEZMOI_EMAIL}",
         "isWorkMachine": ${CHEZMOI_IS_WORK_MACHINE},
+        "isRemoteDevBox": ${CHEZMOI_IS_REMOTE_DEV_BOX},
     }
 }
 EOF

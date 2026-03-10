@@ -33,7 +33,11 @@
 [core]
 	excludesfile = {{ .chezmoi.homeDir }}/.gitignore
 	quotepath = false
+{{ if .isRemoteDevBox -}}
+	editor = vim
+{{ else -}}
 	editor = code --wait
+{{ end -}}
 	pager = delta
 
 [alias]
