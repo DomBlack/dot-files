@@ -1,0 +1,13 @@
+{{/*
+  SSH-signing allowed-signers file for `git log --show-signature`
+  / `git verify-commit`. Lists every public key Dom uses to sign
+  commits across his machines, so any of them verifies locally.
+
+  Format: <principal> [namespaces=...] <key-type> <base64-blob>
+  See ssh-keygen(1) "ALLOWED SIGNERS".
+*/ -}}
+# 1Password-managed key (Mac mini + any box with 1Password GUI)
+{{ .email }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
+
+# Local ~/.ssh/id_ed25519 (remote dev boxes — no 1Password GUI)
+{{ .email }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ3rOWfDkPfsItHtRCKrq3SfBPVEW3xKT/nF3zKEsZ+I

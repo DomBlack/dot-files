@@ -2,11 +2,21 @@
 [gpg]
 	format = ssh
 [gpg "ssh"]
+{{- if .isRemoteDevBox }}
+	# Remote dev box: no 1Password GUI here, sign with the local
+	# ~/.ssh/id_ed25519 file directly via system ssh-keygen.
+{{- else }}
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+{{- end }}
+	allowedSignersFile = {{ .chezmoi.homeDir }}/.config/git/allowed_signers
 [commit]
 	gpgsign = true
 [user]
+{{- if .isRemoteDevBox }}
+	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
+{{- else }}
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
+{{- end }}
 	name = Dominic Black
 	email = {{ .email }}
 {{ else -}}
