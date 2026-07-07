@@ -88,7 +88,7 @@ setw -g window-status-format "{{ $winFmt }}"
 setw -g window-status-current-format "{{ $winCurFmt }}"
 
 # git segment lands here in Task 3
-set -g status-right "#[fg=#5c5f70]%H:%M "
+set -g status-right "#(~/.config/tmux/scripts/git-status.sh '#{pane_current_path}')#[fg=#5c5f70]%H:%M "
 
 # ── Pane borders ────────────────────────────────────────────────────────────
 set -g pane-border-style "fg=#33364a"
