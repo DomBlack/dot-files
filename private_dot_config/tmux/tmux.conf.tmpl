@@ -61,6 +61,10 @@ bind s choose-tree -s
 # Mouse extras
 bind -n DoubleClick1Border resize-pane -Z -t "{mouse}"
 
+# ── Which-key menu: prefix-? or any unbound key after the prefix ───────────
+bind ? run-shell "~/.config/tmux/scripts/keys-menu.sh"
+bind -T prefix Any run-shell "~/.config/tmux/scripts/keys-menu.sh"
+
 # ── Copy mode (vi) ──────────────────────────────────────────────────────────
 bind [ copy-mode
 bind -T copy-mode-vi v send -X begin-selection
