@@ -57,6 +57,8 @@ bind x confirm-before -p "kill pane? (y/n)" kill-pane
 bind r source-file ~/.config/tmux/tmux.conf \; display-message "config reloaded"
 bind d detach-client
 bind s choose-tree -s
+bind m run-shell "~/.config/tmux/scripts/pane-stash.sh stash"
+bind M run-shell "~/.config/tmux/scripts/pane-stash.sh restore"
 
 # Mouse extras
 bind -n DoubleClick1Border resize-pane -Z -t "{mouse}"
@@ -74,7 +76,7 @@ bind -T copy-mode-vi Escape send -X cancel
 # ── Status line ─────────────────────────────────────────────────────────────
 {{- /* Window entry formats are built here so later config (stash styling,
        agent glyphs) can extend one definition used by both formats. */ -}}
-{{- $winFmt := `#[fg=#5c5f70]#I #W` -}}
+{{- $winFmt := `#{?#{==:#{window_name},stash},#[fg=#5c5f70]▸ stash (#{window_panes}),#[fg=#5c5f70]#I #W}` -}}
 {{- $winCurFmt := `#[fg=#56b6c2]#[bold]#I #[fg=#d8d8d8]#W#[default]#{?window_zoomed_flag, #[fg=#56b6c2]⛶,}` -}}
 set -g status on
 set -g status-position bottom
