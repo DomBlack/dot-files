@@ -13,7 +13,7 @@ continuation_prompt = "[▸▹ ](dimmed white)"
 # Simplified format for better performance
 format = """
 $username at $hostname in $directory\
-( \\($git_branch($git_status)$git_state\\))
+{{ if not .tmuxVariant }}( \\($git_branch($git_status)$git_state\\)){{ end }}
 $cmd_duration$jobs$sudo$character"""
 
 right_format = """$singularity\
@@ -183,6 +183,7 @@ threshold = 70
 style = "italic dimmed yellow"
 
 [git_branch]
+disabled = {{ .tmuxVariant }}
 format = '[$branch]($style)'
 style = "cyan"
 truncation_symbol = "⋯"
@@ -193,9 +194,10 @@ format = '([+$added]($added_style))([-$deleted]($deleted_style))'
 added_style = 'bold green'
 deleted_style = 'bold red'
 ignore_submodules = true
-disabled = false
+disabled = {{ .tmuxVariant }}
 
 [git_status]
+disabled = {{ .tmuxVariant }}
 format = '([$all_status$ahead_behind]($style))'
 modified = "[●](bold red)"
 staged = "[●](bold bright-green)"
