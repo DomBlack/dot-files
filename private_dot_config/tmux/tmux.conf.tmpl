@@ -1,0 +1,68 @@
+# ============================================================================
+# tmux configuration — managed by chezmoi
+# Design spec: docs/superpowers/specs/2026-07-07-tmux-config-design.md
+# ============================================================================
+
+# ── Terminal plumbing (Ghostty / cmux interop) ─────────────────────────────
+set -g default-terminal "tmux-256color"
+set -ga terminal-features ",xterm-ghostty:RGB:usstyle:extkeys:clipboard:title"
+set -ga terminal-features ",xterm-256color:RGB"
+set -g set-clipboard on          # OSC 52 — copies land on the Mac clipboard over SSH
+set -g allow-passthrough on      # let apps inside tmux emit OSC sequences
+set -g focus-events on
+set -g extended-keys on
+set -g set-titles on
+set -g set-titles-string "#S · #W"
+
+# ── Quality of life ─────────────────────────────────────────────────────────
+set -g base-index 1
+setw -g pane-base-index 1
+set -g renumber-windows on
+set -g history-limit 100000
+set -s escape-time 0             # no ESC lag in vim
+setw -g aggressive-resize on
+set -g status-interval 5
+set -g mouse on
+set -g monitor-bell on           # agent needs-input rings the bell → terminal notification
+set -g visual-bell off
+set -g bell-action any
+setw -g mode-keys vi
+set -g display-panes-time 800
+setw -g automatic-rename on
+setw -g automatic-rename-format "#{pane_current_command}"
+
+# ── Prefix: C-Space ─────────────────────────────────────────────────────────
+# prefix is None + a root-table binding so that pressing C-Space can ALSO
+# flash pane number badges (display-panes -b). All default prefix-table
+# bindings (0-9 select-window, etc.) still exist and work.
+set -g prefix None
+bind -n C-Space { display-panes -b -d 800 ; switch-client -T prefix }
+bind C-Space send-keys C-Space   # nested tmux: C-Space C-Space sends the key through
+
+# ── Keybindings ─────────────────────────────────────────────────────────────
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+bind c new-window -c "#{pane_current_path}"
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+bind z resize-pane -Z
+bind Space display-panes         # blocking: press the badge digit to jump to that pane
+bind x confirm-before -p "kill pane? (y/n)" kill-pane
+bind r source-file ~/.config/tmux/tmux.conf \; display-message "config reloaded"
+bind d detach-client
+bind s choose-tree -s
+
+# Mouse extras
+bind -n DoubleClick1Border resize-pane -Z -t "{mouse}"
+
+# ── Copy mode (vi) ──────────────────────────────────────────────────────────
+bind [ copy-mode
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi y send -X copy-selection-and-cancel
+bind -T copy-mode-vi Escape send -X cancel
