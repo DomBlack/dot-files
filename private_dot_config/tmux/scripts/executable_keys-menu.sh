@@ -22,4 +22,4 @@ exec tmux display-menu -T "#[fg=#56b6c2] tmux · C-Space + key " -x C -y C \
   "paste"                                "]" "paste-buffer" \
   "sessions"                             "s" "choose-tree -s" \
   "detach"                               "d" "detach-client" \
-  "reload config"                        "r" "source-file ~/.config/tmux/tmux.conf"
+  "reload config"                        "r" "source-file ~/.config/tmux/tmux.conf ; display-message 'config reloaded'"
