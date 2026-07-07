@@ -24,6 +24,11 @@ except json.JSONDecodeError:
     sys.stdout.write(raw)
     sys.exit(0)
 
+if not isinstance(data, dict):
+    # Never corrupt the live settings: emit input unchanged and skip merging
+    sys.stdout.write(raw)
+    sys.exit(0)
+
 hooks = data.setdefault("hooks", {})
 for event, command in WANTED.items():
     groups = hooks.setdefault(event, [])

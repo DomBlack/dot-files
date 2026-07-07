@@ -67,9 +67,18 @@ fi
 if ! command -v tmux &>/dev/null; then
   if command -v apt-get &>/dev/null && sudo -n true 2>/dev/null; then
     echo "==> Installing tmux..."
-    sudo apt-get update -qq && sudo apt-get install -y -qq tmux
+    sudo apt-get update -qq && sudo apt-get install -y -qq tmux \
+      || echo "WARN: tmux install failed; continuing without it" >&2
   else
     echo "WARN: tmux not found and cannot be installed automatically" >&2
+  fi
+fi
+
+if command -v tmux &>/dev/null; then
+  # Config requires tmux >= 3.4 (prefix-table Any binding, display-panes -b -d)
+  tmux_ver=$(tmux -V | grep -oE '[0-9]+\.[0-9]+' | head -1)
+  if [ "$(printf '%s\n3.4\n' "$tmux_ver" | sort -V | head -1)" != "3.4" ]; then
+    echo "WARN: tmux $tmux_ver < 3.4 — the tmux config may fail to load" >&2
   fi
 fi
 

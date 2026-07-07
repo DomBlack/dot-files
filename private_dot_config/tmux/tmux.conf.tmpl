@@ -76,6 +76,8 @@ bind -T copy-mode-vi Escape send -X cancel
 # ── Status line ─────────────────────────────────────────────────────────────
 {{- /* Window entry formats are built here so later config (stash styling,
        agent glyphs) can extend one definition used by both formats. */ -}}
+{{- /* Agent-working ✳ uses #e5a86b (softer amber) deliberately — distinct from
+       the #e5c07b prefix-dot/dirty amber, per the approved mockups. */ -}}
 {{- $agentGlyph := `#{?#{==:#{@agent_state},working}, #[fg=#e5a86b]✳,#{?#{==:#{@agent_state},input}, #[fg=#e06c75]#[bold]✳#[nobold],#{?#{==:#{@agent_state},done}, #[fg=#98c379]✓,#{?#{m:claude*,#{pane_current_command}}, #[fg=#5c5f70]✳,#{?#{m:codex*,#{pane_current_command}}, #[fg=#5c5f70]✳,}}}}}` -}}
 {{- $winFmt := printf `#{?#{==:#{window_name},stash},#[fg=#5c5f70]▸ stash (#{window_panes}),#[fg=#5c5f70]#I #W%s}` $agentGlyph -}}
 {{- $winCurFmt := printf `#[fg=#56b6c2]#[bold]#I #[fg=#d8d8d8]#W#[default]#{?window_zoomed_flag, #[fg=#56b6c2]⛶,}%s` $agentGlyph -}}
