@@ -76,8 +76,9 @@ bind -T copy-mode-vi Escape send -X cancel
 # ── Status line ─────────────────────────────────────────────────────────────
 {{- /* Window entry formats are built here so later config (stash styling,
        agent glyphs) can extend one definition used by both formats. */ -}}
-{{- $winFmt := `#{?#{==:#{window_name},stash},#[fg=#5c5f70]▸ stash (#{window_panes}),#[fg=#5c5f70]#I #W}` -}}
-{{- $winCurFmt := `#[fg=#56b6c2]#[bold]#I #[fg=#d8d8d8]#W#[default]#{?window_zoomed_flag, #[fg=#56b6c2]⛶,}` -}}
+{{- $agentGlyph := `#{?#{==:#{@agent_state},working}, #[fg=#e5a86b]✳,#{?#{==:#{@agent_state},input}, #[fg=#e06c75]#[bold]✳#[nobold],#{?#{==:#{@agent_state},done}, #[fg=#98c379]✓,#{?#{m:claude*,#{pane_current_command}}, #[fg=#5c5f70]✳,#{?#{m:codex*,#{pane_current_command}}, #[fg=#5c5f70]✳,}}}}}` -}}
+{{- $winFmt := printf `#{?#{==:#{window_name},stash},#[fg=#5c5f70]▸ stash (#{window_panes}),#[fg=#5c5f70]#I #W%s}` $agentGlyph -}}
+{{- $winCurFmt := printf `#[fg=#56b6c2]#[bold]#I #[fg=#d8d8d8]#W#[default]#{?window_zoomed_flag, #[fg=#56b6c2]⛶,}%s` $agentGlyph -}}
 set -g status on
 set -g status-position bottom
 set -g status-style "bg=default,fg=#5c5f70"
@@ -101,6 +102,9 @@ set -g pane-border-style "fg=#33364a"
 set -g pane-active-border-style "fg=#56b6c2"
 set -g pane-border-lines single
 set -g pane-border-status off
-set -g pane-border-format " #[fg=#98c379]#[bold]#{pane_current_command}#[default] #[fg=#5c5f70]#{s|{{ .chezmoi.homeDir }}|~|:pane_current_path} "
+set -g pane-border-format " #[fg=#98c379]#[bold]#{pane_current_command}#[default] #[fg=#5c5f70]#{s|{{ .chezmoi.homeDir }}|~|:pane_current_path}#{?#{==:#{@agent_pane_state},working}, #[fg=#e5a86b]✳ working,#{?#{==:#{@agent_pane_state},input}, #[fg=#e06c75]✳ needs input,#{?#{==:#{@agent_pane_state},done}, #[fg=#98c379]✓ done,}}} "
 # show border labels only when a window is actually split
 set-hook -g window-layout-changed 'set -wF pane-border-status "#{?#{==:#{window_panes},1},off,top}"'
+
+# clear a finished agent's ✓ when you visit its window
+set-hook -g after-select-window 'if -F "#{==:#{@agent_state},done}" "set -w -u @agent_state"'

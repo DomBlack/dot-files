@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+"""chezmoi modify script: merge tmux agent-state hooks into ~/.claude/settings.json.
+
+Receives current file contents on stdin, writes merged contents to stdout.
+Idempotent: skips any hook command already present.
+"""
+import json
+import sys
+
+SCRIPT = "$HOME/.config/tmux/scripts/agent-state.sh"
+WANTED = {
+    "UserPromptSubmit": f"{SCRIPT} working",
+    "PreToolUse": f"{SCRIPT} working",
+    "Notification": f"{SCRIPT} input",
+    "Stop": f"{SCRIPT} done",
+    "SessionEnd": f"{SCRIPT} clear",
+}
+
+raw = sys.stdin.read()
+data = json.loads(raw) if raw.strip() else {}
+
+hooks = data.setdefault("hooks", {})
+for event, command in WANTED.items():
+    groups = hooks.setdefault(event, [])
+    existing = [
+        h.get("command")
+        for g in groups
+        for h in g.get("hooks", [])
+        if h.get("type") == "command"
+    ]
+    if command not in existing:
+        groups.append({"hooks": [{"type": "command", "command": command}]})
+
+json.dump(data, sys.stdout, indent=2)
+sys.stdout.write("\n")
