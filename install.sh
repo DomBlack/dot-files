@@ -62,6 +62,18 @@ EOF
 fi
 
 # ---------------------------------------------------------------------------
+# 2b. Install tmux (best effort — Coder images usually have apt + sudo)
+# ---------------------------------------------------------------------------
+if ! command -v tmux &>/dev/null; then
+  if command -v apt-get &>/dev/null && sudo -n true 2>/dev/null; then
+    echo "==> Installing tmux..."
+    sudo apt-get update -qq && sudo apt-get install -y -qq tmux
+  else
+    echo "WARN: tmux not found and cannot be installed automatically" >&2
+  fi
+fi
+
+# ---------------------------------------------------------------------------
 # 3. Run chezmoi init + apply from this local source directory
 # ---------------------------------------------------------------------------
 echo "==> Running chezmoi init --apply..."
