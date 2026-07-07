@@ -35,11 +35,11 @@ out=$(cd "$dir" 2>/dev/null && git status --porcelain=v2 --branch 2>/dev/null | 
     if (staged)    seg = seg "#[fg=#98c379] ●" staged
     if (conflicts) seg = seg "#[fg=#e06c75] ✖" conflicts
     if (untracked) seg = seg "#[fg=#5c5f70] …" untracked
-    if (ahead)     seg = seg "#[fg=#5c5f70] ↑" ahead
-    if (behind)    seg = seg "#[fg=#5c5f70] ↓" behind
+    if (ahead+0)   seg = seg "#[fg=#5c5f70] ↑" ahead
+    if (behind+0)  seg = seg "#[fg=#5c5f70] ↓" behind
     printf "%s#[default]  #[fg=#5c5f70]·  ", seg
   }
 ')
 
-printf '%s' "$out" > "$cache"
+printf '%s' "$out" > "$cache.$$" && mv "$cache.$$" "$cache"
 printf '%s' "$out"
