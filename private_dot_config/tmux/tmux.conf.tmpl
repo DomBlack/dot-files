@@ -106,5 +106,5 @@ set -g pane-border-format " #[fg=#98c379]#[bold]#{pane_current_command}#[default
 # show border labels only when a window is actually split
 set-hook -g window-layout-changed 'set -wF pane-border-status "#{?#{==:#{window_panes},1},off,top}"'
 
-# clear a finished agent's ✓ when you visit its window
-set-hook -g after-select-window 'if -F "#{==:#{@agent_state},done}" "set -w -u @agent_state"'
+# clear a finished agent's ✓ when you visit its window (window + every pane border)
+set-hook -g after-select-window 'if -F "#{==:#{@agent_state},done}" "run-shell \"~/.config/tmux/scripts/agent-state.sh ack\""'
