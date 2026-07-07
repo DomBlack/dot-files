@@ -66,3 +66,35 @@ bind [ copy-mode
 bind -T copy-mode-vi v send -X begin-selection
 bind -T copy-mode-vi y send -X copy-selection-and-cancel
 bind -T copy-mode-vi Escape send -X cancel
+
+# ── Status line ─────────────────────────────────────────────────────────────
+{{- /* Window entry formats are built here so later config (stash styling,
+       agent glyphs) can extend one definition used by both formats. */ -}}
+{{- $winFmt := `#[fg=#5c5f70]#I #W` -}}
+{{- $winCurFmt := `#[fg=#56b6c2]#[bold]#I #[fg=#d8d8d8]#W#[default]#{?window_zoomed_flag, #[fg=#56b6c2]⛶,}` -}}
+set -g status on
+set -g status-position bottom
+set -g status-style "bg=default,fg=#5c5f70"
+set -g status-justify left
+set -g status-left-length 60
+set -g status-right-length 120
+
+# mode dot: amber = prefix held, cyan = copy mode; two spaces reserved so
+# nothing shifts when the dot appears
+set -g status-left "#{?#{==:#{client_key_table},prefix},#[fg=#e5c07b]● ,#{?pane_in_mode,#[fg=#56b6c2]● ,  }}#[fg=#b98aec]#[bold]#S#[default]{{ if .isRemoteDevBox }}#[fg=#5c5f70] · #[fg=#e06c75]#h#[default]{{ end }}    "
+
+setw -g window-status-separator "   "
+setw -g window-status-format "{{ $winFmt }}"
+setw -g window-status-current-format "{{ $winCurFmt }}"
+
+# git segment lands here in Task 3
+set -g status-right "#[fg=#5c5f70]%H:%M "
+
+# ── Pane borders ────────────────────────────────────────────────────────────
+set -g pane-border-style "fg=#33364a"
+set -g pane-active-border-style "fg=#56b6c2"
+set -g pane-border-lines single
+set -g pane-border-status off
+set -g pane-border-format " #[fg=#98c379]#[bold]#{pane_current_command}#[default] #[fg=#5c5f70]#{s|{{ .chezmoi.homeDir }}|~|:pane_current_path} "
+# show border labels only when a window is actually split
+set-hook -g window-layout-changed 'set -wF pane-border-status "#{?#{==:#{window_panes},1},off,top}"'
