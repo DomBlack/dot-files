@@ -20,28 +20,52 @@
 	name = Dominic Black
 	email = {{ .email }}
 {{ else -}}
+# Linux devboxes: sign with the local key. NOTE: a devbox's public key must be
+# registered on GitHub as a signing key (one-time, from an authed machine) for
+# its commits to show Verified — the current devbox key already is.
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = {{ .chezmoi.homeDir }}/.config/git/allowed_signers
 [commit]
-	gpgsign = false
+	gpgsign = true
 [user]
+	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 	name = Dominic Black
 	email = {{ .email }}
 {{ end -}}
 [github]
 	user = domblack
+[column]
+	ui = auto
 [branch]
 	autosetuprebase = always
-[color]
- 	branch = auto
-	diff = auto
-	interactive = auto
- 	status = auto
- 	ui = true
+	sort = -committerdate
+[tag]
+	sort = version:refname
+[init]
+	defaultBranch = main
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
 [push]
 	default = current
+	autoSetupRemote = true
+	followTags = true
 [fetch]
 	prune = true
+[rerere]
+	enabled = true
+	autoupdate = true
+[rebase]
+	autoStash = true
+	updateRefs = true
+[commit]
+	verbose = true
+[help]
+	autocorrect = prompt
 [core]
-	excludesfile = {{ .chezmoi.homeDir }}/.gitignore
 	quotepath = false
 {{ if .isRemoteDevBox -}}
 	editor = vim
