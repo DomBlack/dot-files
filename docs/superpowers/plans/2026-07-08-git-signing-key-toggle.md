@@ -1,0 +1,196 @@
+# Git SSH Signing Key Toggle Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Sign git commits on this Mac with the filesystem `~/.ssh/id_ed25519` instead of 1Password, behind a per-machine `useOnePasswordSSH` chezmoi flag.
+
+**Architecture:** A new bool in chezmoi data (prompted only on non-remote machines, pre-seeded `false` on devboxes) drives the darwin signing branches in `dot_gitconfig.tmpl`. The Mac's public key joins `allowed_signers` and gets registered on GitHub as a signing key. 1Password entries stay everywhere they're needed to verify historical commits.
+
+**Tech Stack:** chezmoi Go templates, git SSH signing, gh CLI.
+
+**Spec:** `docs/superpowers/specs/2026-07-08-git-signing-key-toggle-design.md`
+
+## Global Constraints
+
+- The 1Password public key (`ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd`) must remain in `allowed_signers.tmpl` and in the flag-true gitconfig branch — historical commits must keep verifying.
+- The Mac filesystem key is exactly: `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICHqypSrOCug75hC++n8qS375Pqybofv23o2ME/Awqpu`
+- Existing devboxes have chezmoi data WITHOUT `useOnePasswordSSH` (pre-seeded by the old install.sh), and chezmoi renders templates with `missingkey=error` — every template read of the flag must be guarded with `hasKey`.
+- `commit.gpgsign = true` stays on for darwin; non-darwin branch of gitconfig is untouched.
+- Do not modify `~/.ssh/config` or remove any key from GitHub.
+- Commits to `main`; commit messages end with `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
+
+---
+
+### Task 1: Templates — flag plumbing, gitconfig branches, allowed_signers
+
+**Files:**
+- Modify: `.chezmoi.jsonc.tmpl`
+- Modify: `install.sh` (pre-seed heredoc, section 2)
+- Modify: `dot_gitconfig.tmpl:1-21` (darwin signing block only)
+- Modify: `private_dot_config/private_git/allowed_signers.tmpl`
+
+**Interfaces:**
+- Produces: chezmoi data key `useOnePasswordSSH` (bool; always present in NEW configs, may be absent in old devbox configs — hence `hasKey` guards).
+
+- [ ] **Step 1: Add the flag to `.chezmoi.jsonc.tmpl`**
+
+Replace the whole file with:
+
+```
+{{ $email := promptStringOnce . "email" "What is your email address" }}
+{{ $isWorkMachine := promptBoolOnce . "isWorkMachine" "Is this a work machine?" }}
+{{ $isRemoteDevBox := promptBoolOnce . "isRemoteDevBox" "Is this a remote dev box?" }}
+{{ $useOnePasswordSSH := false }}
+{{ if not $isRemoteDevBox }}{{ $useOnePasswordSSH = promptBoolOnce . "useOnePasswordSSH" "Use 1Password for git SSH signing?" }}{{ end }}
+
+{
+    "data": {
+        "email": "{{ $email }}",
+        "isWorkMachine": {{ $isWorkMachine }},
+        "isRemoteDevBox": {{ $isRemoteDevBox }},
+        "useOnePasswordSSH": {{ $useOnePasswordSSH }},
+    }
+}
+```
+
+- [ ] **Step 2: Add the flag to the install.sh pre-seed**
+
+In `install.sh`, in the heredoc that writes `$CHEZMOI_CONFIG_FILE`, after the `"isRemoteDevBox"` line add:
+
+```
+        "useOnePasswordSSH": false,
+```
+
+- [ ] **Step 3: Rewrite the darwin signing block in `dot_gitconfig.tmpl`**
+
+Replace lines 1–21 (from `{{ if eq .chezmoi.os "darwin" -}}` through the second `{{- end }}` after `email`) with:
+
+```
+{{ if eq .chezmoi.os "darwin" -}}
+{{- $useOnePassword := and (hasKey . "useOnePasswordSSH") .useOnePasswordSSH -}}
+[gpg]
+	format = ssh
+[gpg "ssh"]
+{{- if $useOnePassword }}
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+{{- else }}
+	# Sign with the local ~/.ssh/id_ed25519 file via system ssh-keygen.
+{{- end }}
+	allowedSignersFile = {{ .chezmoi.homeDir }}/.config/git/allowed_signers
+[commit]
+	gpgsign = true
+[user]
+{{- if $useOnePassword }}
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
+{{- else }}
+	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
+{{- end }}
+	name = Dominic Black
+	email = {{ .email }}
+{{ else -}}
+```
+
+(The old `isRemoteDevBox` conditionals inside this block disappear; devboxes hit the else branches naturally because their flag is false/absent. Nothing after `{{ else -}}` changes.)
+
+- [ ] **Step 4: Add the Mac key to `allowed_signers.tmpl`**
+
+Append to `private_dot_config/private_git/allowed_signers.tmpl`:
+
+```
+# Local ~/.ssh/id_ed25519 on the Mac (filesystem signing key)
+{{ .email }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICHqypSrOCug75hC++n8qS375Pqybofv23o2ME/Awqpu
+```
+
+- [ ] **Step 5: Render all three variants and assert**
+
+```bash
+cd /Users/dom/.local/share/chezmoi
+# Mac, flag false
+chezmoi execute-template --init \
+  --promptString "What is your email address=x@y.z" \
+  --promptBool "Is this a work machine=true,Is this a remote dev box=false,Use 1Password for git SSH signing=false" \
+  < dot_gitconfig.tmpl > /tmp/gc-mac-file.conf
+# Mac, flag true
+chezmoi execute-template --init \
+  --promptString "What is your email address=x@y.z" \
+  --promptBool "Is this a work machine=true,Is this a remote dev box=false,Use 1Password for git SSH signing=true" \
+  < dot_gitconfig.tmpl > /tmp/gc-mac-1p.conf
+# Devbox (no 1Password prompt should be needed)
+chezmoi execute-template --init \
+  --promptString "What is your email address=x@y.z" \
+  --promptBool "Is this a work machine=true,Is this a remote dev box=true" \
+  < dot_gitconfig.tmpl > /tmp/gc-devbox.conf
+
+grep -c 'op-ssh-sign' /tmp/gc-mac-file.conf /tmp/gc-mac-1p.conf /tmp/gc-devbox.conf
+grep 'signingkey' /tmp/gc-mac-file.conf /tmp/gc-devbox.conf
+grep 'signingkey' /tmp/gc-mac-1p.conf
+chezmoi execute-template < private_dot_config/private_git/allowed_signers.tmpl | grep -c 'ssh-ed25519'
+bash -n install.sh && echo install-ok
+```
+
+Expected: op-ssh-sign counts `0`, `1`, `0`; file/devbox variants show `signingkey = <homeDir>/.ssh/id_ed25519.pub`; 1P variant shows the `…R4Sd` literal; allowed_signers has `3` keys; install-ok. Note the devbox render is on darwin so `.chezmoi.os` is darwin — that's fine, we're testing the flag branches; the real devbox linux branch is untouched.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add .chezmoi.jsonc.tmpl install.sh dot_gitconfig.tmpl private_dot_config/private_git/allowed_signers.tmpl
+git commit -m "Add useOnePasswordSSH toggle for git signing; default to filesystem key
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
+```
+
+(This commit is still signed via 1Password — the machine flag flips in Task 2.)
+
+---
+
+### Task 2: Switch this Mac over and verify end-to-end
+
+**Files:**
+- Modify: `~/.config/chezmoi/chezmoi.jsonc` (machine-local, not in repo)
+- No repo changes.
+
+**Interfaces:**
+- Consumes: Task 1's `useOnePasswordSSH` data key and template branches.
+
+- [ ] **Step 1: Set the machine flag**
+
+Edit `~/.config/chezmoi/chezmoi.jsonc`, adding inside `"data"` after the `isRemoteDevBox` line:
+
+```
+        "useOnePasswordSSH": false,
+```
+
+- [ ] **Step 2: Apply and check the rendered config**
+
+```bash
+chezmoi apply -v
+git config --global gpg.ssh.program ; echo "program-exit=$?"
+git config --global user.signingkey
+grep -c 'ssh-ed25519' ~/.config/git/allowed_signers
+```
+
+Expected: apply updates `.gitconfig` and `.config/git/allowed_signers`; `program-exit=1` (unset); signingkey `/Users/dom/.ssh/id_ed25519.pub`; `3` signer keys.
+
+- [ ] **Step 3: Register the key on GitHub as a signing key**
+
+```bash
+gh ssh-key add ~/.ssh/id_ed25519.pub --type signing --title "Mac id_ed25519 (signing)"
+gh ssh-key list | grep -i signing
+```
+
+Expected: key added (or a "key is already in use" error if previously registered — then confirm it appears in the list). The 1Password key is NOT removed.
+
+- [ ] **Step 4: End-to-end signing test in a scratch repo**
+
+```bash
+rm -rf /tmp/signtest && git init -q /tmp/signtest && cd /tmp/signtest
+git commit --allow-empty -m "signing test"
+git verify-commit HEAD && echo "verify-ok"
+git log --show-signature -1 | head -8
+```
+
+Expected: commit succeeds with NO 1Password prompt; `verify-ok`; log shows `Good "git" signature ... ED25519` matching the `…Awqpu` key.
+
+- [ ] **Step 5: Real-repo confirmation**
+
+The next commit in the dotfiles repo (e.g. marking the plan executed, or any pending change) is made normally and checked with `git log --show-signature -1` — Good signature from the filesystem key.
