@@ -29,7 +29,9 @@ set -g bell-action any
 setw -g mode-keys vi
 set -g display-panes-time 800
 setw -g automatic-rename on
-setw -g automatic-rename-format "#{pane_current_command}"
+# Claude Code's process title is its bare version number ("2.1.204"), so
+# name agent windows from the pane title instead of the process
+setw -g automatic-rename-format "#{?#{m:*Claude*,#{pane_title}},claude,#{?#{m:*Codex*,#{pane_title}},codex,#{pane_current_command}}}"
 # name new sessions after their start directory instead of "0", "1", ...
 set-hook -g session-created 'if -F "#{m/r:^[0-9]+$,#{session_name}}" "rename-session \"#{b:pane_current_path}\""'
 
@@ -56,13 +58,33 @@ bind -r J resize-pane -D 5
 bind -r K resize-pane -U 5
 bind -r L resize-pane -R 5
 bind z resize-pane -Z
-bind Space display-panes         # blocking: press the badge digit to jump to that pane
+# digits jump to PANES (matching the badge flash); C-Space Space digit = window
+bind 1 select-pane -t .1
+bind 2 select-pane -t .2
+bind 3 select-pane -t .3
+bind 4 select-pane -t .4
+bind 5 select-pane -t .5
+bind 6 select-pane -t .6
+bind 7 select-pane -t .7
+bind 8 select-pane -t .8
+bind 9 select-pane -t .9
+bind Space switch-client -T winjump
+bind -T winjump 1 select-window -t :=1
+bind -T winjump 2 select-window -t :=2
+bind -T winjump 3 select-window -t :=3
+bind -T winjump 4 select-window -t :=4
+bind -T winjump 5 select-window -t :=5
+bind -T winjump 6 select-window -t :=6
+bind -T winjump 7 select-window -t :=7
+bind -T winjump 8 select-window -t :=8
+bind -T winjump 9 select-window -t :=9
+bind ! break-pane                # move current pane out into its own window
 bind x confirm-before -p "kill pane? (y/n)" kill-pane
 bind r source-file ~/.config/tmux/tmux.conf \; display-message "config reloaded"
 bind d detach-client
 bind s choose-tree -s
-bind m run-shell "~/.config/tmux/scripts/pane-stash.sh stash"
-bind M run-shell "~/.config/tmux/scripts/pane-stash.sh restore"
+bind m run-shell "~/.config/tmux/scripts/pane-stash.sh stash '#{pane_id}'"
+bind M run-shell "~/.config/tmux/scripts/pane-stash.sh restore '#{pane_id}'"
 
 # Mouse extras
 bind -n DoubleClick1Border resize-pane -Z -t "{mouse}"
@@ -82,7 +104,9 @@ bind -T copy-mode-vi Escape send -X cancel
        agent glyphs) can extend one definition used by both formats. */ -}}
 {{- /* Agent-working ✳ uses #e5a86b (softer amber) deliberately — distinct from
        the #e5c07b prefix-dot/dirty amber, per the approved mockups. */ -}}
-{{- $agentGlyph := `#{?#{==:#{@agent_state},working}, #[fg=#e5a86b]✳,#{?#{==:#{@agent_state},input}, #[fg=#e06c75]#[bold]✳#[nobold],#{?#{==:#{@agent_state},done}, #[fg=#98c379]✓,#{?#{m:claude*,#{pane_current_command}}, #[fg=#5c5f70]✳,#{?#{m:codex*,#{pane_current_command}}, #[fg=#5c5f70]✳,}}}}}` -}}
+{{- /* Fallback ✳ matches on pane_title — Claude Code's process name is its
+       version number, but it titles the pane "✳ Claude Code". */ -}}
+{{- $agentGlyph := `#{?#{==:#{@agent_state},working}, #[fg=#e5a86b]✳,#{?#{==:#{@agent_state},input}, #[fg=#e06c75]#[bold]✳#[nobold],#{?#{==:#{@agent_state},done}, #[fg=#98c379]✓,#{?#{m:*Claude*,#{pane_title}}, #[fg=#5c5f70]✳,#{?#{m:*Codex*,#{pane_title}}, #[fg=#5c5f70]✳,#{?#{m:claude*,#{pane_current_command}}, #[fg=#5c5f70]✳,#{?#{m:codex*,#{pane_current_command}}, #[fg=#5c5f70]✳,}}}}}}}` -}}
 {{- $winFmt := printf `#{?#{==:#{window_name},stash},#[fg=#5c5f70]▸ stash (#{window_panes}),#[fg=#5c5f70]#I #W%s}` $agentGlyph -}}
 {{- $winCurFmt := printf `#[fg=#56b6c2]#[bold]#I #[fg=#d8d8d8]#W#[default]#{?window_zoomed_flag, #[fg=#56b6c2]⛶,}%s` $agentGlyph -}}
 set -g status on
