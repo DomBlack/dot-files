@@ -85,4 +85,11 @@
     path = "mise/bin/mise"
     executable = true
     refreshPeriod = "168h"
+
+[".local/bin/sesh"]
+    type = "archive-file"
+    url = "https://github.com/joshmedeski/sesh/releases/download/v2.26.2/sesh_Linux_{{ if eq .chezmoi.arch "arm64" }}arm64{{ else }}x86_64{{ end }}.tar.gz"
+    path = "sesh"
+    executable = true
+    refreshPeriod = "168h"
 {{ end -}}

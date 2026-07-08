@@ -22,6 +22,7 @@ exec tmux display-menu -T "#[fg=#56b6c2] tmux · C-Space + key " -x C -y C -- \
   "copy mode (vi keys, v/y)"             "[" "copy-mode" \
   "-#[fg=#5c5f70]in copy mode: M-, / M-. jump between prompts" "" "" \
   "paste"                                "]" "paste-buffer" \
-  "sessions"                             "s" "choose-tree -s" \
+  "sessions (sesh + fzf)"                "s" "display-popup -E -w 65% -h 70% '~/.config/tmux/scripts/sesh-picker.sh'" \
+  "session tree (classic)"               "S" "choose-tree -s" \
   "detach"                               "d" "detach-client" \
   "reload config"                        "r" "source-file ~/.config/tmux/tmux.conf ; display-message 'config reloaded'"

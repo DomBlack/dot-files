@@ -1,0 +1,14 @@
+# sesh — smart tmux session manager (zoxide frecency + per-project startup).
+# Works with zero config; entries below customize specific projects.
+# Docs: https://github.com/joshmedeski/sesh
+
+# Example project session (uncomment and adjust):
+# [[session]]
+# name = "dotfiles"
+# path = "~/.local/share/chezmoi"
+# startup_command = "git status"
+
+# Example wildcard: every repo under a directory gets a startup command:
+# [[session]]
+# path = "~/src/github.com/avianlabs/*"
+# startup_command = "git status"

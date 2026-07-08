@@ -1,3 +1,8 @@
+[tools]
+# agent-session observability TUI (Claude Code/Codex history, cost, tokens);
+# ubi backend pulls the GitHub release binary — one pin for mac + devboxes
+"ubi:luoyuctl/agenttrace" = "0.5.4"
+
 [settings]
 # honour work repos' .nvmrc / .node-version files
 idiomatic_version_file_enable_tools = ["node"]

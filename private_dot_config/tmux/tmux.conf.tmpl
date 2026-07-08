@@ -82,7 +82,8 @@ bind ! break-pane                # move current pane out into its own window
 bind x confirm-before -p "kill pane? (y/n)" kill-pane
 bind r source-file ~/.config/tmux/tmux.conf \; display-message "config reloaded"
 bind d detach-client
-bind s choose-tree -s
+bind s display-popup -E -w 65% -h 70% "~/.config/tmux/scripts/sesh-picker.sh"
+bind S choose-tree -s            # classic session tree, as fallback
 bind m run-shell "~/.config/tmux/scripts/pane-stash.sh stash '#{pane_id}'"
 bind M run-shell "~/.config/tmux/scripts/pane-stash.sh restore '#{pane_id}'"
 

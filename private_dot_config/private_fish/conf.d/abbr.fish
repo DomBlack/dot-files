@@ -7,4 +7,5 @@ if status is-interactive
     abbr -a cat 'bat'                 # better cat  
     abbr -a find 'fd'                 # better find
     abbr -a grep 'rg'                 # better grep
+    abbr -a cw 'claude --worktree'    # Claude Code in an isolated git worktree
 end
