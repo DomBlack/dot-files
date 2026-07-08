@@ -1,1 +1,3 @@
-{{- template "starship.toml" (dict "tmuxVariant" false) -}}
+{{- /* JediTerm (GoLand/IntelliJ terminals) mangles right prompts — this
+       variant must stay right-prompt-less. See .chezmoitemplates/starship.toml. */ -}}
+{{- template "starship.toml" (dict "tmuxVariant" false "noRightPrompt" true) -}}
