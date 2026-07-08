@@ -1,6 +1,6 @@
 [settings]
 # honour work repos' .nvmrc / .node-version files
 idiomatic_version_file_enable_tools = ["node"]
-# entering a repo whose pinned version isn't installed must WARN, even when no
-# other versions are installed (default hides it then — silent wrong-node bug)
-status.missing_tools = "always"
+# mise's own missing-tools stderr warning is off: the starship prompt module
+# (custom.mise_missing, red ⚠) is the single visible signal for missing pins
+status.missing_tools = "never"
