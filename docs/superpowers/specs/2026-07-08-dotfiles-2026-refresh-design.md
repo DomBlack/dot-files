@@ -95,8 +95,12 @@ delta config stay.
 
 ### 10. Managed AI-agent configs (C4)
 - `chezmoi add ~/.claude/CLAUDE.md` → managed global Claude instructions.
-- `~/.codex/config.toml` → managed as a template; the macOS-specific `notify`
-  line (computer-use app path) wrapped in `{{ if eq .chezmoi.os "darwin" }}`.
+- `~/.codex/config.toml`: NOT managed (scope change during planning) — inspection
+  shows it is live machine state (per-project trust entries, plugin/marketplace
+  state with timestamps) that Codex rewrites constantly, like Claude's
+  settings.json. Fully managing it would clobber that state on every apply, and
+  a merge script for a handful of stable prefs isn't worth the blast radius.
+  Revisit only if a real sync need appears.
 - `~/.claude/settings.json` stays on the existing modify-script merge; runtime
   dirs (projects/, history, sessions) remain unmanaged.
 
