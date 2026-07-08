@@ -32,9 +32,12 @@ case "$cmd" in
     fi
     win_name=$(tmux display-message -p '#{window_name}')
     if [ "$win_name" = "stash" ]; then
-      # If we're in the stash window, break the pane into a new window
+      # If we're in the stash window, break the pane into a new window.
+      # break-pane -n pins the name and disables automatic-rename; turn it
+      # back on so the new window renames itself to its command.
       tmux select-pane -t "$last"
-      tmux break-pane -d -n restored
+      new_win=$(tmux break-pane -d -n restored -P -F '#{window_id}')
+      tmux set-option -w -t "$new_win" automatic-rename on 2>/dev/null || true
     else
       # Otherwise, join to the current window
       tmux join-pane -h -s "$last"

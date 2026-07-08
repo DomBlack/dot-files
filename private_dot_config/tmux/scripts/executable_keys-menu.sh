@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Which-key style menu listing the common bindings. Bound to prefix-? and to
 # any unbound key in the prefix table, so mistypes teach instead of failing.
-exec tmux display-menu -T "#[fg=#56b6c2] tmux · C-Space + key " -x C -y C \
+exec tmux display-menu -T "#[fg=#56b6c2] tmux · C-Space + key " -x C -y C -- \
   "-#[fg=#b98aec]── Panes ──"            "" "" \
   "split right"                          "|" "split-window -h -c '#{pane_current_path}'" \
   "split down"                           "-" "split-window -v -c '#{pane_current_path}'" \

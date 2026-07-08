@@ -30,13 +30,17 @@ setw -g mode-keys vi
 set -g display-panes-time 800
 setw -g automatic-rename on
 setw -g automatic-rename-format "#{pane_current_command}"
+# name new sessions after their start directory instead of "0", "1", ...
+set-hook -g session-created 'if -F "#{m/r:^[0-9]+$,#{session_name}}" "rename-session \"#{b:pane_current_path}\""'
 
 # ── Prefix: C-Space ─────────────────────────────────────────────────────────
 # prefix is None + a root-table binding so that pressing C-Space can ALSO
-# flash pane number badges (display-panes -b). All default prefix-table
+# flash pane number badges (display-panes -bN). All default prefix-table
 # bindings (0-9 select-window, etc.) still exist and work.
+# -N makes the badges display-only: without it display-panes captures the
+# next keypress for pane selection, eating whatever you type in the 800ms.
 set -g prefix None
-bind -n C-Space { display-panes -b -d 800 ; switch-client -T prefix }
+bind -n C-Space { display-panes -bN -d 800 ; switch-client -T prefix }
 bind C-Space send-keys C-Space   # nested tmux: C-Space C-Space sends the key through
 
 # ── Keybindings ─────────────────────────────────────────────────────────────
