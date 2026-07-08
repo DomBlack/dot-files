@@ -1,0 +1,4 @@
+# Local-only atuin: no account, no sync, no update nags.
+search_mode = "fuzzy"
+auto_sync = false
+update_check = false
