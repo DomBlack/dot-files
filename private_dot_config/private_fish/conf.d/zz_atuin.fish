@@ -7,5 +7,5 @@ if command -q atuin
     if functions -q fzf_configure_bindings
         fzf_configure_bindings --history=
     end
-    atuin init fish --disable-up-arrow | source
+    atuin init fish --disable-up-arrow --disable-ai | source
 end
