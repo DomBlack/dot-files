@@ -103,32 +103,39 @@ Append to `private_dot_config/private_git/allowed_signers.tmpl`:
 
 - [ ] **Step 5: Render all three variants and assert**
 
+(Corrected during execution: `--promptBool` keys must be the FULL prompt string
+including the trailing `?`, and prompt flags only affect prompt calls inside the
+template being rendered — so the config template is tested with `--init` flags,
+and `dot_gitconfig.tmpl` is tested against explicit data via temp config files.)
+
 ```bash
 cd /Users/dom/.local/share/chezmoi
-# Mac, flag false
-chezmoi execute-template --init \
-  --promptString "What is your email address=x@y.z" \
-  --promptBool "Is this a work machine=true,Is this a remote dev box=false,Use 1Password for git SSH signing=false" \
-  < dot_gitconfig.tmpl > /tmp/gc-mac-file.conf
-# Mac, flag true
-chezmoi execute-template --init \
-  --promptString "What is your email address=x@y.z" \
-  --promptBool "Is this a work machine=true,Is this a remote dev box=false,Use 1Password for git SSH signing=true" \
-  < dot_gitconfig.tmpl > /tmp/gc-mac-1p.conf
-# Devbox (no 1Password prompt should be needed)
-chezmoi execute-template --init \
-  --promptString "What is your email address=x@y.z" \
-  --promptBool "Is this a work machine=true,Is this a remote dev box=true" \
-  < dot_gitconfig.tmpl > /tmp/gc-devbox.conf
+# Part A — config template prompt logic (Mac+1P / Mac+file / devbox never prompts)
+chezmoi execute-template --init --promptString "What is your email address?=x@y.z" \
+  --promptBool "Is this a work machine?=true,Is this a remote dev box?=false,Use 1Password for git SSH signing?=true" \
+  < .chezmoi.jsonc.tmpl | grep OnePassword     # → true
+chezmoi execute-template --init --promptString "What is your email address?=x@y.z" \
+  --promptBool "Is this a work machine?=true,Is this a remote dev box?=false,Use 1Password for git SSH signing?=false" \
+  < .chezmoi.jsonc.tmpl | grep OnePassword     # → false
+chezmoi execute-template --init --promptString "What is your email address?=x@y.z" \
+  --promptBool "Is this a work machine?=true,Is this a remote dev box?=true" \
+  < .chezmoi.jsonc.tmpl | grep OnePassword     # → false (prompt skipped)
 
-grep -c 'op-ssh-sign' /tmp/gc-mac-file.conf /tmp/gc-mac-1p.conf /tmp/gc-devbox.conf
-grep 'signingkey' /tmp/gc-mac-file.conf /tmp/gc-devbox.conf
-grep 'signingkey' /tmp/gc-mac-1p.conf
+# Part B — gitconfig branches against explicit data (incl. old devbox data lacking the flag)
+mk() { printf '{"data":{"email":"x@y.z","isWorkMachine":true,%s}}' "$1" > "$2"; }
+mk '"isRemoteDevBox":false,"useOnePasswordSSH":false' /tmp/cz-mac-file.json
+mk '"isRemoteDevBox":false,"useOnePasswordSSH":true'  /tmp/cz-mac-1p.json
+mk '"isRemoteDevBox":true'                            /tmp/cz-devbox-old.json
+for c in mac-file mac-1p devbox-old; do
+  echo "=== $c ==="
+  chezmoi --config /tmp/cz-$c.json --config-format json execute-template < dot_gitconfig.tmpl | grep -E 'op-ssh-sign|signingkey'
+done
+
 chezmoi execute-template < private_dot_config/private_git/allowed_signers.tmpl | grep -c 'ssh-ed25519'
 bash -n install.sh && echo install-ok
 ```
 
-Expected: op-ssh-sign counts `0`, `1`, `0`; file/devbox variants show `signingkey = <homeDir>/.ssh/id_ed25519.pub`; 1P variant shows the `…R4Sd` literal; allowed_signers has `3` keys; install-ok. Note the devbox render is on darwin so `.chezmoi.os` is darwin — that's fine, we're testing the flag branches; the real devbox linux branch is untouched.
+Expected: Part A `true` / `false` / `false`; Part B mac-file and devbox-old show only `signingkey = /Users/dom/.ssh/id_ed25519.pub` (no op-ssh-sign; devbox-old also proves the `hasKey` guard against old pre-seeded data), mac-1p shows op-ssh-sign + the `…R4Sd` literal; allowed_signers has `3` keys; install-ok.
 
 - [ ] **Step 6: Commit**
 
