@@ -13,7 +13,7 @@ continuation_prompt = "[▸▹ ](dimmed white)"
 # Simplified format for better performance
 format = """
 $username at $hostname in $directory\
-{{ if not .tmuxVariant }}( \\($git_branch($git_status)$git_state\\)){{ end }}
+{{ if not .tmuxVariant }}( \\($git_branch($git_status)$git_state\\)){{ end }}${custom.mise_missing}
 $cmd_duration$jobs$sudo$character"""
 
 right_format = """$singularity\
@@ -93,6 +93,17 @@ format = "$env_value"
 variable = "TERMINAL_EMULATOR"
 default = ""
 format = "$env_value"
+
+[custom.mise_missing]
+description = "Warn when the repo pins tool versions mise hasn't installed"
+command = "mise ls --current --offline 2>/dev/null | awk '/\\(missing\\)/ {printf \"%s%s@%s\", s, $1, $2; s=\" \"}'"
+# gate on `when` alone: detect_files ORs with when (false positives in pinned
+# repos with nothing missing) and misses subdirs that inherit a parent's pin
+when = "mise ls --current --offline 2>/dev/null | grep -q '(missing)'"
+symbol = "⚠ "
+style = "bold red"
+format = " [$symbol$output missing → mise install]($style)"
+shell = ["sh"]
 
 [fill]
 symbol = ' '
