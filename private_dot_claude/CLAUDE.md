@@ -1,6 +1,6 @@
 # Interacting with Git
 
-Unless explicity asked overwise, use `gt` CLI for interacting with PRs and creating stacks. Stacks are easier to review because each PR is smaller and more logically focused.
+Unless explicitly asked otherwise, use `gt` CLI for interacting with PRs and creating stacks. Stacks are easier to review because each PR is smaller and more logically focused.
 
 Use these commands instead of `git` commands.
 

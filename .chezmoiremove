@@ -1,1 +1,2 @@
 .gitignore
+.config/fish/conf.d/nvm-auto.fish

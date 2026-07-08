@@ -66,7 +66,7 @@ fi
 # ---------------------------------------------------------------------------
 # 2b. Install tmux (best effort — Coder images usually have apt + sudo)
 # ---------------------------------------------------------------------------
-if ! command -v tmux &>/dev/null; then
+if ! command -v tmux &>/dev/null || ! command -v fish &>/dev/null; then
   if command -v apt-get &>/dev/null && sudo -n true 2>/dev/null; then
     echo "==> Installing tmux/fish..."
     sudo apt-get update -qq && sudo apt-get install -y -qq tmux fish \
