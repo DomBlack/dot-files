@@ -20,6 +20,7 @@ exec tmux display-menu -T "#[fg=#56b6c2] tmux · C-Space + key " -x C -y C -- \
   "-#[fg=#5c5f70]Space 1-9 — jump to window" "" "" \
   "-#[fg=#b98aec]── Copy & Session ──"   "" "" \
   "copy mode (vi keys, v/y)"             "[" "copy-mode" \
+  "-#[fg=#5c5f70]in copy mode: M-, / M-. jump between prompts" "" "" \
   "paste"                                "]" "paste-buffer" \
   "sessions"                             "s" "choose-tree -s" \
   "detach"                               "d" "detach-client" \
