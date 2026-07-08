@@ -56,6 +56,7 @@ if [ ! -f "$CHEZMOI_CONFIG_FILE" ]; then
         "email": "${CHEZMOI_EMAIL}",
         "isWorkMachine": ${CHEZMOI_IS_WORK_MACHINE},
         "isRemoteDevBox": ${CHEZMOI_IS_REMOTE_DEV_BOX},
+        "useOnePasswordSSH": false,
     }
 }
 EOF

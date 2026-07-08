@@ -1,11 +1,14 @@
 {{ $email := promptStringOnce . "email" "What is your email address" }}
 {{ $isWorkMachine := promptBoolOnce . "isWorkMachine" "Is this a work machine?" }}
 {{ $isRemoteDevBox := promptBoolOnce . "isRemoteDevBox" "Is this a remote dev box?" }}
+{{ $useOnePasswordSSH := false }}
+{{ if not $isRemoteDevBox }}{{ $useOnePasswordSSH = promptBoolOnce . "useOnePasswordSSH" "Use 1Password for git SSH signing?" }}{{ end }}
 
 {
     "data": {
         "email": "{{ $email }}",
         "isWorkMachine": {{ $isWorkMachine }},
         "isRemoteDevBox": {{ $isRemoteDevBox }},
+        "useOnePasswordSSH": {{ $useOnePasswordSSH }},
     }
 }

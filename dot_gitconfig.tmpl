@@ -1,21 +1,21 @@
 {{ if eq .chezmoi.os "darwin" -}}
+{{- $useOnePassword := and (hasKey . "useOnePasswordSSH") .useOnePasswordSSH -}}
 [gpg]
 	format = ssh
 [gpg "ssh"]
-{{- if .isRemoteDevBox }}
-	# Remote dev box: no 1Password GUI here, sign with the local
-	# ~/.ssh/id_ed25519 file directly via system ssh-keygen.
-{{- else }}
+{{- if $useOnePassword }}
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+{{- else }}
+	# Sign with the local ~/.ssh/id_ed25519 file via system ssh-keygen.
 {{- end }}
 	allowedSignersFile = {{ .chezmoi.homeDir }}/.config/git/allowed_signers
 [commit]
 	gpgsign = true
 [user]
-{{- if .isRemoteDevBox }}
-	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
-{{- else }}
+{{- if $useOnePassword }}
 	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
+{{- else }}
+	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 {{- end }}
 	name = Dominic Black
 	email = {{ .email }}
