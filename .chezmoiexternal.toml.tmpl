@@ -1,0 +1,88 @@
+{{ if ne .chezmoi.os "darwin" -}}
+{{- $arch := "x86_64" -}}
+{{- $goarch := "amd64" -}}
+{{- $miseArch := "x64" -}}
+{{- $armGnuFallback := "musl" -}}
+{{- if eq .chezmoi.arch "arm64" }}{{ $arch = "aarch64" }}{{ $goarch = "arm64" }}{{ $miseArch = "arm64" }}{{ $armGnuFallback = "gnu" }}{{ end -}}
+
+# Pinned static binaries for devboxes (no sudo needed). Update by bumping the
+# version numbers; chezmoi re-downloads when the URL changes or every 168h.
+#
+# Note: eza, ripgrep, and delta do not publish musl builds for aarch64, so on
+# arm64 those three fall back to their gnu (glibc) linux builds instead.
+
+[".local/bin/eza"]
+    type = "archive-file"
+    url = "https://github.com/eza-community/eza/releases/download/v0.23.4/eza_{{ $arch }}-unknown-linux-{{ $armGnuFallback }}.tar.gz"
+    path = "./eza"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/bat"]
+    type = "archive-file"
+    url = "https://github.com/sharkdp/bat/releases/download/v0.26.1/bat-v0.26.1-{{ $arch }}-unknown-linux-musl.tar.gz"
+    stripComponents = 1
+    path = "bat"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/fd"]
+    type = "archive-file"
+    url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-{{ $arch }}-unknown-linux-musl.tar.gz"
+    stripComponents = 1
+    path = "fd"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/rg"]
+    type = "archive-file"
+    url = "https://github.com/BurntSushi/ripgrep/releases/download/15.1.0/ripgrep-15.1.0-{{ $arch }}-unknown-linux-{{ $armGnuFallback }}.tar.gz"
+    stripComponents = 1
+    path = "rg"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/fzf"]
+    type = "archive-file"
+    url = "https://github.com/junegunn/fzf/releases/download/v0.74.0/fzf-0.74.0-linux_{{ $goarch }}.tar.gz"
+    path = "fzf"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/zoxide"]
+    type = "archive-file"
+    url = "https://github.com/ajeetdsouza/zoxide/releases/download/v0.10.0/zoxide-0.10.0-{{ $arch }}-unknown-linux-musl.tar.gz"
+    path = "zoxide"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/delta"]
+    type = "archive-file"
+    url = "https://github.com/dandavison/delta/releases/download/0.19.2/delta-0.19.2-{{ $arch }}-unknown-linux-{{ $armGnuFallback }}.tar.gz"
+    stripComponents = 1
+    path = "delta"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/starship"]
+    type = "archive-file"
+    url = "https://github.com/starship/starship/releases/download/v1.26.0/starship-{{ $arch }}-unknown-linux-musl.tar.gz"
+    path = "starship"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/atuin"]
+    type = "archive-file"
+    url = "https://github.com/atuinsh/atuin/releases/download/v18.16.1/atuin-{{ $arch }}-unknown-linux-musl.tar.gz"
+    stripComponents = 1
+    path = "atuin"
+    executable = true
+    refreshPeriod = "168h"
+
+[".local/bin/mise"]
+    type = "archive-file"
+    url = "https://github.com/jdx/mise/releases/download/v2026.7.2/mise-v2026.7.2-linux-{{ $miseArch }}-musl.tar.gz"
+    path = "mise/bin/mise"
+    executable = true
+    refreshPeriod = "168h"
+{{ end -}}

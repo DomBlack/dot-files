@@ -68,9 +68,9 @@ fi
 # ---------------------------------------------------------------------------
 if ! command -v tmux &>/dev/null; then
   if command -v apt-get &>/dev/null && sudo -n true 2>/dev/null; then
-    echo "==> Installing tmux..."
-    sudo apt-get update -qq && sudo apt-get install -y -qq tmux \
-      || echo "WARN: tmux install failed; continuing without it" >&2
+    echo "==> Installing tmux/fish..."
+    sudo apt-get update -qq && sudo apt-get install -y -qq tmux fish \
+      || echo "WARN: tmux/fish install failed; continuing without it" >&2
   else
     echo "WARN: tmux not found and cannot be installed automatically" >&2
   fi
