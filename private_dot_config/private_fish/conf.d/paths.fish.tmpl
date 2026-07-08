@@ -1,5 +1,5 @@
 {{ if eq .chezmoi.os "darwin" -}}
-fish_add_path "/Users/dom/Library/Application Support/JetBrains/Toolbox/scripts" # JetBrains Toolbox scripts
+fish_add_path "{{ .chezmoi.homeDir }}/Library/Application Support/JetBrains/Toolbox/scripts" # JetBrains Toolbox scripts
 fish_add_path "/opt/homebrew/opt/libpq/bin" # Postgres binaries
 
 eval $(/opt/homebrew/bin/brew shellenv) # Homebrew

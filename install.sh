@@ -52,6 +52,7 @@ if [ ! -f "$CHEZMOI_CONFIG_FILE" ]; then
   mkdir -p "$CHEZMOI_CONFIG_DIR"
   cat > "$CHEZMOI_CONFIG_FILE" <<EOF
 {
+    "sourceDir": "${SCRIPT_DIR}",
     "data": {
         "email": "${CHEZMOI_EMAIL}",
         "isWorkMachine": ${CHEZMOI_IS_WORK_MACHINE},

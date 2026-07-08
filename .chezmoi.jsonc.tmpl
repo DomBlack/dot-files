@@ -5,6 +5,7 @@
 {{ if not $isRemoteDevBox }}{{ $useOnePasswordSSH = promptBoolOnce . "useOnePasswordSSH" "Use 1Password for git SSH signing?" }}{{ end }}
 
 {
+    "sourceDir": {{ .chezmoi.sourceDir | quote }},
     "data": {
         "email": "{{ $email }}",
         "isWorkMachine": {{ $isWorkMachine }},

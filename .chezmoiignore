@@ -1,3 +1,6 @@
 README.md
 install.sh
 docs
+{{ if .isRemoteDevBox }}
+.config/ghostty
+{{ end }}

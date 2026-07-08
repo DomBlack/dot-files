@@ -13,7 +13,7 @@ set -gx XDG_VIDEOS_DIR $HOME/Videos
 {{ if .isRemoteDevBox -}}
 set -gx EDITOR vim
 {{ else if eq .chezmoi.os "darwin" -}}
-set -gx EDITOR cursor
+set -gx EDITOR code
 {{ else -}}
 set -gx EDITOR vim
 {{ end -}}
