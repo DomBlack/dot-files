@@ -100,7 +100,7 @@
 # /releases/latest/ URL redirects to the newest version, re-checked every
 # refreshPeriod (force with `chezmoi apply --refresh-externals`). Configured —
 # auto-index, UI, Claude Code registration — by
-# run_onchange_after_configure-codebase-memory-mcp.sh.
+# run_onchange_after_configure-mcp-servers.sh.
 [".local/bin/codebase-memory-mcp"]
     type = "archive-file"
     url = "https://github.com/DeusData/codebase-memory-mcp/releases/latest/download/codebase-memory-mcp-ui-{{ .chezmoi.os }}-{{ .chezmoi.arch }}.tar.gz"
