@@ -95,12 +95,15 @@
 {{ end -}}
 
 # codebase-memory-mcp: code-graph MCP server for coding agents — mac + devboxes
-# (brew only ships the headless build, so both OSes pin the "ui" release asset,
-# which bundles the graph visualisation). Configured — auto-index, UI, Claude
-# Code registration — by run_onchange_after_configure-codebase-memory-mcp.sh.
+# (brew only ships the headless build, so both OSes pull the "ui" release asset,
+# which bundles the graph visualisation). Tracks the latest release: the
+# /releases/latest/ URL redirects to the newest version, re-checked every
+# refreshPeriod (force with `chezmoi apply --refresh-externals`). Configured —
+# auto-index, UI, Claude Code registration — by
+# run_onchange_after_configure-codebase-memory-mcp.sh.
 [".local/bin/codebase-memory-mcp"]
     type = "archive-file"
-    url = "https://github.com/DeusData/codebase-memory-mcp/releases/download/v0.9.0/codebase-memory-mcp-ui-{{ .chezmoi.os }}-{{ .chezmoi.arch }}.tar.gz"
+    url = "https://github.com/DeusData/codebase-memory-mcp/releases/latest/download/codebase-memory-mcp-ui-{{ .chezmoi.os }}-{{ .chezmoi.arch }}.tar.gz"
     path = "codebase-memory-mcp"
     executable = true
     refreshPeriod = "168h"
