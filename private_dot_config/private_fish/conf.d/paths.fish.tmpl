@@ -2,6 +2,12 @@
 fish_add_path "{{ .chezmoi.homeDir }}/Library/Application Support/JetBrains/Toolbox/scripts" # JetBrains Toolbox scripts
 fish_add_path "/opt/homebrew/opt/libpq/bin" # Postgres binaries
 
+# If an ancestor process was launched from inside a `brew` run (e.g. the terminal
+# relaunched during a cask upgrade), these leaked vars make `brew shellenv` think
+# it's brew-within-brew and print nothing, leaving /opt/homebrew/bin off PATH.
+set -e HOMEBREW_PATH
+set -e HOMEBREW_BREW_FILE
+
 eval $(/opt/homebrew/bin/brew shellenv) # Homebrew
 {{ end -}}
 
