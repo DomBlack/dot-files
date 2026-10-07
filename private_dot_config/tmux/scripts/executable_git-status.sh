@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # gitmux-style status segment for the tmux status line.
 # Usage: git-status.sh <directory>   Output: "⎇ main ✚2 ●1 …3 ↑1" with tmux styles.
+# --no-optional-locks: a plain status refreshes the index under index.lock,
+# which on a big repo collided with real git commands every few seconds
 set -u
 
 dir="${1:-}"
@@ -18,7 +20,7 @@ if [ -f "$cache" ]; then
   fi
 fi
 
-out=$(cd "$dir" 2>/dev/null && git status --porcelain=v2 --branch 2>/dev/null | awk '
+out=$(cd "$dir" 2>/dev/null && git --no-optional-locks status --porcelain=v2 --branch 2>/dev/null | awk '
   $1 == "#" && $2 == "branch.head" { branch = $3 }
   $1 == "#" && $2 == "branch.ab"   { ahead = substr($3, 2); behind = substr($4, 2) }
   $1 == "1" || $1 == "2" {
