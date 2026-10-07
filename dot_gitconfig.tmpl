@@ -208,9 +208,68 @@
         grep \"checkout: moving from\" | \
         head -n 10 | \
         perl -pe \"s/.*?moving from (\\S+) to (\\S+).*?\\{(.*?)\\}/printf(\\\"%-20s -> %-20s (%s)\\\\n\\\", \\$1, \\$2, \\$3)/e\"'"
+{{- if eq .chezmoi.os "darwin" }}
+
+	# git-stack aliases, as written by `git stack install` (recorded below
+	# under [stack] managedAliases so install and --uninstall agree with us)
+	create = stack create
+	modify = stack modify
+	restack = stack restack
+	submit = stack submit
+	sync = stack sync
+	up = stack up
+	down = stack down
+	top = stack top
+	bottom = stack bottom
+	c = stack create
+	m = stack modify
+	rs = stack restack
+	ss = stack submit --stack
+	u = stack up
+	d = stack down
+	t = stack top
+	b = stack bottom
+	co = stack checkout
+	continue = stack continue
+	abort = stack abort
+{{- end }}
 [interactive]
 	diffFilter = delta --color-only
 [delta]
 	navigate = true
 [merge]
 	conflictStyle = zdiff3
+{{- if eq .chezmoi.os "darwin" }}
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[stack]
+	branchPrefix = dom
+	managedAliases = create
+	managedAliases = modify
+	managedAliases = restack
+	managedAliases = submit
+	managedAliases = sync
+	managedAliases = up
+	managedAliases = down
+	managedAliases = top
+	managedAliases = bottom
+	managedAliases = c
+	managedAliases = m
+	managedAliases = rs
+	managedAliases = ss
+	managedAliases = u
+	managedAliases = d
+	managedAliases = t
+	managedAliases = b
+	managedAliases = co
+	managedAliases = continue
+	managedAliases = abort
+	managedFiles = {{ .chezmoi.homeDir }}/.config/fish/completions/git-stack.fish
+	managedFiles = {{ .chezmoi.homeDir }}/.claude/skills/git-stack/SKILL.md
+[stack "ai"]
+	extraPrompt = Use /dom-voice to write all commits, titles and descriptions. Always write about why we're making the changes, don't mention tests.
+	auto = true
+{{- end }}
