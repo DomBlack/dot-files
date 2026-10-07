@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""chezmoi modify script: merge tmux agent-state hooks into ~/.claude/settings.json.
+"""chezmoi modify script: merge tmux agent-state hooks and fixed settings into ~/.claude/settings.json.
 
 Receives current file contents on stdin, writes merged contents to stdout.
-Idempotent: skips any hook command already present.
+Idempotent: skips any hook command already present and only overwrites the
+fixed settings listed in SETTINGS.
 """
 import json
 import sys
@@ -14,6 +15,13 @@ WANTED = {
     "Notification": f"{SCRIPT} input",
     "Stop": f"{SCRIPT} done",
     "SessionEnd": f"{SCRIPT} clear",
+}
+
+# Settings enforced on every machine. Empty attribution strings stop Claude
+# Code appending Co-Authored-By trailers to commits and the generated-with
+# footer to PR descriptions.
+SETTINGS = {
+    "attribution": {"commit": "", "pr": ""},
 }
 
 raw = sys.stdin.read()
@@ -40,6 +48,9 @@ for event, command in WANTED.items():
     ]
     if command not in existing:
         groups.append({"hooks": [{"type": "command", "command": command}]})
+
+for key, value in SETTINGS.items():
+    data[key] = value
 
 json.dump(data, sys.stdout, indent=2)
 sys.stdout.write("\n")
