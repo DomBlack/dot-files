@@ -5,14 +5,30 @@
 
 # ── Terminal plumbing (Ghostty / cmux interop) ─────────────────────────────
 set -g default-terminal "tmux-256color"
-set -ga terminal-features ",xterm-ghostty:RGB:usstyle:extkeys:clipboard:title"
+{{- /* Everything Ghostty supports that tmux can model (no sixel, rectfill or
+       margins). progressbar forwards OSC 9;4 to the Ghostty tab. */}}
+{{- $ghosttyFeatures := "RGB:usstyle:extkeys:clipboard:title:hyperlinks:osc7:focus:ccolour:cstyle:strikethrough:overline:sync:progressbar" }}
+set -ga terminal-features ",xterm-ghostty:{{ $ghosttyFeatures }}"
 set -ga terminal-features ",xterm-256color:RGB"
+# Ghostty downgrades TERM to xterm-256color when the terminfo is missing (ssh
+# without ssh-terminfo); if this server was started from Ghostty, still give
+# those clients the full feature set. $TERM_PROGRAM expands from the global
+# environment here (run-shell/if-shell jobs would see "tmux" instead)
+%if "#{==:$TERM_PROGRAM,ghostty}"
+set -ga terminal-features ",xterm-256color:{{ $ghosttyFeatures }}"
+%endif
+# tmux downsamples RGB for clients without it, so panes can always claim truecolor
+set-environment -g COLORTERM truecolor
 set -g set-clipboard on          # OSC 52 — copies land on the Mac clipboard over SSH
-set -g allow-passthrough on      # let apps inside tmux emit OSC sequences
+# let apps inside tmux emit OSC sequences tmux doesn't know (e.g. OSC 7501
+# status), even from panes that aren't visible
+set -g allow-passthrough all
 set -g focus-events on
 set -g extended-keys on
 set -g set-titles on
-set -g set-titles-string "#S · #W"
+# a program's own title (OSC 2) when it sets one, otherwise session · window;
+# pane_title defaults to the hostname
+set -g set-titles-string "#{?#{!=:#{pane_title},#{host}},#{pane_title},#S · #W}"
 
 # ── Quality of life ─────────────────────────────────────────────────────────
 set -g base-index 1
