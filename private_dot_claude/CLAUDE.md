@@ -74,15 +74,16 @@ Do NOT comment on the stack position or what tooling was pushed to push the stac
 
 # Agent teams: shut teammates down when you are done with them
 
-Each teammate runs in its own tmux pane, and the pane only closes when the teammate exits. A finished
-teammate left alone sits idle in that pane for the rest of the session and the window fills with dead
-panes. So:
+Teammates run in process (`teammateMode` is `in-process`), so there are no tmux panes to tidy; the
+`/monitor` pane shows every teammate and subagent with its status, time and cost. A finished teammate
+left alone still sits idle for the rest of the session, holding its context and listening for
+messages. So:
 
-- When a teammate reports its task done and you have no further work for it, send it a shutdown
-  request straight away.
+- When a teammate reports its task done and you have no further work for it, stop it straight away
+  (TaskStop by name, or a shutdown request).
 - If you may still send it follow-up work (a review fix round, a re-check), keep it until that is
-  settled, then shut it down.
-- Before you finish a session, shut down every teammate you spawned.
+  settled, then stop it.
+- Before you finish a session, stop every teammate you spawned.
 
-A backstop hook closes any teammate pane that has been idle for 10 minutes. A teammate you left
-waiting that long may be gone: spawn a fresh one instead of retrying the message.
+A teammate you left waiting a long time may have been reaped: spawn a fresh one instead of retrying
+the message.

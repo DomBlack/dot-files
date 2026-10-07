@@ -1,0 +1,5 @@
+{
+  "name": "dom-mods",
+  "owner": { "name": "dom" },
+  "plugins": [{ "name": "monitor", "source": "./monitor" }]
+}

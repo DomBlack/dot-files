@@ -6,6 +6,7 @@ Idempotent: skips any hook command already present and only overwrites the
 fixed settings listed in SETTINGS.
 """
 import json
+import os
 import sys
 
 SCRIPT = "$HOME/.config/tmux/scripts/agent-state.sh"
@@ -19,9 +20,22 @@ WANTED = {
 
 # Settings enforced on every machine. Empty attribution strings stop Claude
 # Code appending Co-Authored-By trailers to commits and the generated-with
-# footer to PR descriptions.
+# footer to PR descriptions. In-process teammates keep named agents inside the
+# session instead of opening a tmux pane each; the monitor mod shows them.
 SETTINGS = {
     "attribution": {"commit": "", "pr": ""},
+    "teammateMode": "in-process",
+}
+
+# The monitor mod lives in ~/.claude/mods, a folder marketplace chezmoi ships;
+# listing it here makes Claude Code register the marketplace and enable the
+# plugin on every machine without a manual install.
+MODS_DIR = os.path.expanduser("~/.claude/mods")
+MARKETPLACES = {
+    "dom-mods": {"source": {"source": "directory", "path": MODS_DIR}},
+}
+PLUGINS = {
+    "monitor@dom-mods": True,
 }
 
 raw = sys.stdin.read()
@@ -51,6 +65,14 @@ for event, command in WANTED.items():
 
 for key, value in SETTINGS.items():
     data[key] = value
+
+marketplaces = data.setdefault("extraKnownMarketplaces", {})
+for name, entry in MARKETPLACES.items():
+    marketplaces.setdefault(name, entry)
+
+plugins = data.setdefault("enabledPlugins", {})
+for name, enabled in PLUGINS.items():
+    plugins.setdefault(name, enabled)
 
 json.dump(data, sys.stdout, indent=2)
 sys.stdout.write("\n")

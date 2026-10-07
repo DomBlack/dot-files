@@ -1,0 +1,7 @@
+{
+  "name": "monitor",
+  "version": "0.1.0",
+  "description": "A live pane monitoring the session: the subagent tree with model, time, status, tokens and cost, plus Clippy.",
+  "author": { "name": "dom" },
+  "types": "./types/index.d.ts"
+}
