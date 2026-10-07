@@ -1,5 +1,5 @@
 # CD to a project directory with tab completion
-set -g PRJ_PATHS ~/src/github.com/avianlabs/backend ~/src/github.com/avianlabs/ ~/src/github.com/DomBlack 
+set -g PRJ_PATHS ~/src/github.com/avianlabs/monorepo ~/src/github.com/avianlabs/ ~/src/github.com/DomBlack 
 function prj
     # Try to find the directory in each of the project paths
     for path in $PRJ_PATHS
