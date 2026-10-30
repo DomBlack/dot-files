@@ -16,7 +16,7 @@ CTX7_URL="https://mcp.context7.com/mcp"
 
 if [ -x "$CBM" ]; then
   "$CBM" config set auto_index true >/dev/null
-  "$CBM" config set ui true >/dev/null
+  "$CBM" config set ui_enabled true >/dev/null
 else
   echo "WARN: $CBM not installed yet; skipping its configuration" >&2
 fi
