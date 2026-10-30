@@ -57,8 +57,14 @@ set-hook -g session-created 'if -F "#{m/r:^[0-9]+$,#{session_name}}" "rename-ses
 # bindings (0-9 select-window, etc.) still exist and work.
 # -N makes the badges display-only: without it display-panes captures the
 # next keypress for pane selection, eating whatever you type in the 800ms.
+# tmux 3.8 made display-panes a pane mode instead of an overlay and removed
+# -b; older versions still need -b or switch-client waits the full 800ms.
 set -g prefix None
+%if "#{e|>=|f:#{version},3.8}"
+bind -n C-Space { display-panes -N -d 800 ; switch-client -T prefix }
+%else
 bind -n C-Space { display-panes -bN -d 800 ; switch-client -T prefix }
+%endif
 bind C-Space send-keys C-Space   # nested tmux: C-Space C-Space sends the key through
 
 # ── Keybindings ─────────────────────────────────────────────────────────────
