@@ -22,6 +22,7 @@ export type Subagent = {
   name?: string
   model?: string
   isTeammate?: boolean
+  isPane?: boolean
   source?: 'ledger'
   status: SubagentStatus
   startedAt: number

@@ -4,46 +4,13 @@ Unless explicitly asked otherwise, use git-stack for branches, commits and PRs. 
 
 git-stack is installed as `git-stack` and exposed as `git stack <command>`. It also runs an MCP server (`git-stack`) whose tools should be available to you. **Prefer the MCP tools over the CLI** for anything that touches a stack; fall back to the CLI only when the server is not connected. Plain `git` is fine for reading (`git status`, `git diff`, `git log`) and for staging files.
 
-### MCP tools
-
-| Task | Tool |
-|---|---|
-| See every stack, PR state, what needs a restack | `stack_view` (read-only; run it before `stack_submit`) |
-| New branch on top of the current one, committing staged changes | `stack_create` (you write `message`) |
-| Amend the current branch's commit (or add one with `commit: true`) and restack everything above | `stack_modify` |
-| Rebase the stack after edits lower down | `stack_restack` |
-| Move around | `stack_navigate` (`up` / `down` / `top` / `bottom`, or a `branch`) |
-| Push and create or update PRs | `stack_submit` (you write `pull_requests` as `{branch: {title, body}}`; ready for review unless `draft: true`) |
-| Fetch, update trunk, restack, prune merged branches | `stack_sync` |
-| Merge the stack's PRs up to a branch into trunk, all or nothing, then sync | `stack_merge` (`branch`, `method` = `merge`/`squash`/`rebase`, `no_sync`); plain `gh pr merge` refuses stacked PRs |
-
-On an error with `code: "conflict"`, resolve the listed files, `git add` them, then call the same tool again with `continue: true` (or `abort: true` to give up). On `not_at_top`, call `stack_navigate {direction: "top"}` first; gh stack can only add branches at the top. On `interaction_required`, pass the text it needs (`message`, `pull_requests`) instead of letting it open an editor.
-
-### CLI equivalents
-
-- `git stack create [name] -m "subject" -m "body paragraph"` - new branch stacked on the current one from the staged changes. Repeated `-m` flags become separate paragraphs, so subject and body can be passed separately.
-- `git stack modify` / `git stack modify -c -m "message"` - amend the current commit (or add a new one with `-c`) and restack descendants
-- `git stack restack` - rebase each branch of the current stack onto its parent
-- `git stack up` / `git stack down` / `git stack top` / `git stack bottom` / `git stack checkout <branch>` - navigate
-- `git stack log` (also bare `git stack`) - show every stack as a tree with PR state
-- `git stack submit --no-edit` - push the whole stack and create or update PRs (ready for review by default; `--draft` for drafts; `--dry-run` to preview)
-- `git stack sync` - fetch, update trunk, restack, push, prune merged branches
-- `git stack merge [branch]` - merge the stack's PRs up to and including a branch into trunk in one go, then sync (`--squash` `--rebase` `--merge` `--no-sync`)
-
-Aliases: `git c`, `git m`, `git rs`, `git u`, `git d`, `git t`, `git b`, `git co`, `git ss`.
+The tool-by-tool reference (MCP tool names and arguments, error codes, CLI equivalents and aliases) lives in the `git-stack` skill and in the git-stack server's own instructions. Invoke the skill rather than working from memory. Plain `gh pr merge` refuses stacked PRs; use `stack_merge`.
 
 ### Rules
 
 - Never run `git rebase`, `git commit --amend` or `git push --force` by hand on a stacked branch. The branches above would be left behind. Use `stack_modify` / `stack_restack`.
 - New work goes on a new branch on top (`stack_create`). To change something lower down, `stack_navigate` there, edit, then `stack_modify`; it restacks the rest.
 - `stack_submit` always submits the whole stack, so run `stack_view` first to know which branches get new PRs and need titles and bodies.
-
-### Typical Workflow
-
-1. Stage the files, then `stack_create` with a commit message
-2. Further changes to the same branch: stage, then `stack_modify`
-3. `stack_view`, then `stack_submit` with a title and body per new PR
-4. For stacked changes: `stack_create` again on top, then `stack_submit` again
 
 # Commit messages, PR titles and PR descriptions
 
@@ -58,6 +25,19 @@ Layout is always **why, then how**:
 Never mention how the tests are written (frameworks, fixtures, mocking approach, which test files changed) unless it is critical to the story, for example when the whole PR is about the test infrastructure or a test caught the bug being fixed. "Tests added" style filler is noise; leave it out.
 
 Do NOT comment on the stack position or what tooling was pushed to push the stack on the PR description
+
+## Write it like a human, keep it simple
+
+A PR description is read by a colleague who may not know this corner of the codebase. It is not a changelog and not a design doc. Every one must pass these before it is posted:
+
+- **Plain prose, 3 to 4 short paragraphs, no headings, no bold labels, no bullet lists of files or functions.** If it needs a list, one short bullet list at most.
+- **Tell it as a story**: what was going wrong, what you did about it, anything the reviewer or whoever deploys it needs to know. In that order.
+- **Don't assume knowledge of the codebase.** Say what a thing is the first time you name it ("the nonce account machine, which releases a nonce after its transaction finishes"), not just its identifier. One or two code names per paragraph, never a run of them.
+- **Cut the detail a reviewer gets from the diff anyway.** Which transaction a publish runs in, which struct gained a field, which helper was reused: leave it out unless it is the point of the change.
+- **Write the way you'd explain it over Slack**: "so", "i.e.", "while doing this I found", parentheses for asides. No "verified", "ensures", "leverages", no stacked hyphenated adjectives, no em dashes.
+- **Reread it once as the reviewer.** If any sentence reads like generated text or like it was written for someone who already knows the code, rewrite or delete it.
+
+Verified on PR #19712 (2026-10-12): the first body was correct but got sent back as "doesn't read like a human wrote it"; the accepted rewrite was shorter, told the story in order, and dropped the implementation detail.
 
 # MCP Tool Routing
 

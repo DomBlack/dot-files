@@ -118,7 +118,7 @@ test('elapsed time ticks, and a finished agent collapses to one line', async ($,
   await clock.advance(5_000)
   await $.turn.complete({ answer: 'Done.', durationMs: 70_000, isAborted: false, turnId: 't1', agentId: 'agent-1', reason: 'answer' })
   expect(await ui.find({ key: 'detail-agent-1' })).toBeUndefined()
-  expect((await ui.find({ key: 'node-agent-1' }))?.text).toBe('└─ ✓ Explore · Find callers of foo · 1:10 · ≈$0.00')
+  expect((await ui.find({ key: 'node-agent-1' }))?.text).toBe('└─ ✓ Explore · Find callers of foo · sonnet-5-5 · 1:10 · ≈$0.00')
   await clock.advance(60_000)
   expect((await ui.find({ key: 'node-agent-1' }))?.text).toContain('1:10')
   expect((await ui.find({ key: 'summary' }))?.text).toBe('$0.31 · 1 done')
@@ -366,7 +366,61 @@ test('Clippy reacts at once to a prompt, an agent starting or ending, and the sp
   await ui.unmount()
 })
 
-test('a teammate is tracked by its team address and its ledger is read from its transcript file', async ($, on) => {
+test("a subagent's turn start neither marks the main session as working nor counts as a prompt", async ($, on) => {
+  world(on)
+  const ui = await $.ui.mount(PANE)
+  await $.agent.spawn(SPAWN)
+  await $.turn.start({ text: 'Find every caller of foo.', turnId: 't1', agentId: 'agent-1' })
+  expect((await ui.find({ key: 'detail-main' }))?.text).toContain('idle')
+  expect((await ui.find({ key: 'activity-main' }))?.text).toContain('spawning Find callers of foo')
+  await $.turn.start({ text: 'Now check the wire graph.', turnId: 't2' })
+  expect((await ui.find({ key: 'detail-main' }))?.text).toContain('running')
+  await ui.unmount()
+})
+
+test('an in-process teammate is keyed by its loop id, goes idle between turns, and is done once shut down', async ($, on) => {
+  const { clock, live } = world(on, { skip: ['agent.spawn'] })
+  const script = stepsBottom(on)
+  const id = 'aimpl-1-38e6b866f06d0aa0'
+  on('agent.spawn', ($, e) => {
+    live.push({ id, description: e.description, type: e.subagentType, status: 'running', name: 'impl-1', teammateId: 'impl-1@session-503cd9f4' })
+    return { agentId: id, teammateId: 'impl-1@session-503cd9f4', model: 'claude-haiku-5-5' }
+  })
+  const ui = await $.ui.mount(PANE)
+  await $.agent.spawn({ ...SPAWN, subagentType: 'impl-1', name: 'impl-1', isTeammate: true, description: 'Implement Task 1: diff parser' })
+  expect((await ui.find({ key: `node-${id}` }))?.text).toContain('impl-1')
+  await clock.advance(8_000)
+  expect((await ui.find({ key: `detail-${id}` }))?.text).toBe('   haiku-5-5 · 0:08 · running · ≈$0.00')
+
+  script.chunks = [{ kind: 'stop', ref: 0, stopReason: 'end_turn', usage: { model: 'claude-haiku-5-5', input_tokens: 1_000_000, output_tokens: 200_000, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } }]
+  await stepFor($, id, 'claude-haiku-5-5')
+  await callTool($, { tool: 'Bash', tool_use_id: 'toolu_2', agentId: id, command: 'go test ./...' })
+  expect((await ui.find({ key: `detail-${id}` }))?.text).toBe('   haiku-5-5 · 0:08 · running · ≈$2.00 · 1 tool')
+  expect((await ui.find({ key: `activity-${id}` }))?.text).toContain('running go test ./...')
+
+  await $.turn.complete({ answer: 'Task 1 done.', durationMs: 1, isAborted: false, turnId: 't1', agentId: id, reason: 'answer' })
+  live[0]!.status = 'idle'
+  await clock.advance(1_000)
+  expect((await ui.find({ key: `detail-${id}` }))?.text).toContain('idle')
+  expect((await ui.find({ key: 'summary' }))?.text).toBe('$2.31 · 1 idle')
+
+  await $.turn.start({ text: 'Now absorb the apply step.', turnId: 't2', agentId: id })
+  live[0]!.status = 'running'
+  expect((await ui.find({ key: `detail-${id}` }))?.text).toContain('running')
+  await $.turn.complete({ answer: 'Absorbed.', durationMs: 1, isAborted: false, turnId: 't2', agentId: id, reason: 'answer' })
+  live[0]!.status = 'idle'
+  await clock.advance(1_000)
+
+  live.length = 0
+  await clock.advance(1_000)
+  expect((await ui.find({ key: `node-${id}` }))?.text).toBe('└─ ✓ impl-1 · Implement Task 1: diff parser · haiku-5-5 · 0:11 · ≈$2.00')
+  expect((await ui.find({ key: 'summary' }))?.text).toBe('$2.31 · 1 done')
+  await $.ui.press({ plugin: 'monitor', key: `press-${id}`, requestId: 'monitor' })
+  expect((await ui.find({ key: `usage-${id}` }))?.text).toBe('≈$2.00 · 1.00M in · 0 cached · 200.0k out')
+  await ui.unmount()
+})
+
+test('a pane teammate is tracked by its team address and its ledger is read from its transcript file', async ($, on) => {
   const { clock, live } = world(on, { skip: ['agent.spawn'] })
   on('agent.spawn', ($, e) => {
     live.push({ id: 'scout@session-28a82511', description: e.description, type: e.subagentType, status: 'running', name: 'scout', teammateId: 'scout@session-28a82511' })

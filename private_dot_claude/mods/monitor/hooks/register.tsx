@@ -38,6 +38,7 @@ function normalise(a: Partial<Subagent> & { id: string }): Subagent {
     name: a.name,
     model: a.model,
     isTeammate: a.isTeammate,
+    isPane: a.isPane,
     source: a.source,
     status: a.status ?? 'running',
     startedAt: a.startedAt ?? 0,
@@ -533,7 +534,7 @@ async function refreshTeammateLedgers($: EngineInterface, t: number) {
   if (t - ledgerAt < LEDGER_EVERY_MS) return
   ledgerAt = t
   const list = await readAgents($)
-  const mates = list.filter(a => a.isTeammate && (isLive(a.status) || (a.endedAt !== undefined && t - a.endedAt < 30_000)))
+  const mates = list.filter(a => a.isTeammate && a.isPane && (isLive(a.status) || (a.endedAt !== undefined && t - a.endedAt < 30_000)))
   if (mates.length === 0) return
   const home = (await $.env.get('HOME').catch(() => undefined)) ?? ''
   const cwd = await $.session.cwd().catch(() => '')
@@ -572,6 +573,10 @@ async function tick($: EngineInterface) {
         const live = byId.get(a.id)
         if (!live) {
           if (t - a.startedAt <= GONE_AFTER_MS) return a
+          if (a.isTeammate && a.status === 'idle') {
+            void noteEvent($, `Teammate ${agentLabel(a)} (${a.description}) was shut down after ${elapsed(t - a.startedAt)}.`).catch(() => undefined)
+            return { ...a, status: 'completed' as const, endedAt: t }
+          }
           void noteEvent($, `Subagent ${agentLabel(a)} (${a.description}) vanished without finishing; it was probably killed.`).catch(() => undefined)
           return { ...a, status: 'killed' as const, endedAt: t }
         }
@@ -629,7 +634,8 @@ function detailLine(a: Subagent, t: number): string {
 }
 
 function doneLine(a: Subagent, t: number): string {
-  return ` · ${a.description} · ${agentElapsed(a, t)} · ${agentCost(a)}`
+  const model = a.model ? ` · ${shortModel(a.model)}` : ''
+  return ` · ${a.description}${model} · ${agentElapsed(a, t)} · ${agentCost(a)}`
 }
 
 function transcriptLines(rows: readonly SessionMessage[], width: number): string[] {
@@ -710,9 +716,10 @@ export const register: Register = on => {
 
   on('agent.spawn', async ($, e, next) => {
     const spawned = await next(e)
-    const id = spawned.teammateId ?? spawned.agentId
+    const id = spawned.agentId ?? spawned.teammateId
     if (!id) return spawned
     const startedAt = await $.clock.now()
+    const isTeammate = e.isTeammate === true || spawned.teammateId !== undefined
     const entry: Subagent = {
       id,
       parentId: e.parentAgentId,
@@ -720,7 +727,8 @@ export const register: Register = on => {
       type: e.subagentType,
       name: e.name,
       model: spawned.model ?? e.model,
-      isTeammate: e.isTeammate === true || spawned.teammateId !== undefined,
+      isTeammate,
+      isPane: isTeammate && (spawned.agentId === undefined || spawned.agentId === spawned.teammateId),
       status: 'running',
       startedAt,
       toolCalls: 0,
@@ -749,6 +757,11 @@ export const register: Register = on => {
   })
 
   on('turn.start', async ($, e, next) => {
+    const agentId = e.agentId
+    if (agentId !== undefined) {
+      await update($, agents, list => list.map(a => (a.id === agentId && a.status === 'idle' ? { ...a, status: 'running' as const } : a)))
+      return next(e)
+    }
     await update($, root, r => ({ ...r, isWorking: true, activity: 'thinking' }))
     if (e.text.trim()) {
       lastPrompt = clip(e.text, 200)
@@ -817,13 +830,14 @@ export const register: Register = on => {
       await update($, root, r => ({ ...r, isWorking: false, activity: answer ?? r.activity }))
       return next(e)
     }
+    const live = (await readAgents($)).find(a => a.id === agentId && isLive(a.status))
     const status: SubagentStatus =
-      e.reason === 'answer' ? 'completed' : e.reason === 'aborted' ? 'killed' : 'failed'
-    const ended = (await readAgents($)).find(a => a.id === agentId && isLive(a.status))
+      e.reason === 'answer' ? (live?.isTeammate ? 'idle' : 'completed') : e.reason === 'aborted' ? 'killed' : 'failed'
+    const ended = isEnded(status) ? live : undefined
     await update($, agents, list =>
       list.map(a =>
         a.id === agentId && isLive(a.status)
-          ? { ...a, status, endedAt, activity: answer ?? a.activity }
+          ? { ...a, status, endedAt: isEnded(status) ? endedAt : a.endedAt, activity: answer ?? a.activity }
           : a,
       ),
     )
@@ -898,7 +912,7 @@ async function drawPane($: EngineInterface, e: PaneRender): Promise<RenderElemen
   const focused = viewing ? list.find(a => a.id === viewing) : undefined
   if (focused) {
     let lines: string[] | undefined
-    if (!focused.isTeammate) {
+    if (!focused.isPane) {
       const got = await $.session.messages({ agentId: focused.id }).catch(() => undefined)
       if (Array.isArray(got)) lines = transcriptLines(got, width)
     }
@@ -921,7 +935,7 @@ async function drawPane($: EngineInterface, e: PaneRender): Promise<RenderElemen
         </Box>
       </Box>,
       line(`detail-${focused.id}`, detailLine(focused, t), true),
-      line(`usage-${focused.id}`, `${agentCost(focused)} · ${tokenLine(focused.usage)}${focused.isTeammate ? ' · teammate, read from its transcript' : ''}`, true),
+      line(`usage-${focused.id}`, `${agentCost(focused)} · ${tokenLine(focused.usage)}${focused.isPane ? ' · teammate, read from its transcript' : ''}`, true),
       blank(),
     )
     if (lines.length === 0) rows.push(line('transcript', 'No transcript yet.', true))
