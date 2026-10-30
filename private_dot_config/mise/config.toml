@@ -4,6 +4,12 @@
 "github:luoyuctl/agenttrace" = "0.5.4"
 go = "1.27.1"
 
+[env]
+# mise points GOBIN at each Go version's own bin dir, so a `go install`ed tool
+# vanishes in any repo pinning another Go. Keep them all in ~/bin (GOPATH is
+# $HOME, see fish conf.d/go.fish) whichever Go built them.
+GOBIN = "{{env.HOME}}/bin"
+
 [settings]
 # honour work repos' .nvmrc / .node-version files
 idiomatic_version_file_enable_tools = ["node"]
