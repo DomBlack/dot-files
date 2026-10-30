@@ -40,6 +40,10 @@
 	path = ~/.config/git/avianlabs.gitconfig
 [github]
 	user = domblack
+# Always talk to GitHub over SSH, even for https:// remotes, so private repos
+# work without a credential helper.
+[url "git@github.com:"]
+	insteadOf = https://github.com/
 [column]
 	ui = auto
 [branch]

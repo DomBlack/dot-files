@@ -7,7 +7,7 @@
 # GitHub auth) get a warning instead of a failed apply.
 set -u
 
-REPO_URL="https://github.com/DomBlack/private-agent-skills.git"
+REPO_URL="git@github.com:DomBlack/private-agent-skills.git"
 REPO="$HOME/src/github.com/DomBlack/private-agent-skills"
 LINK_DIRS="$HOME/.claude/skills $HOME/.agents/skills"
 
