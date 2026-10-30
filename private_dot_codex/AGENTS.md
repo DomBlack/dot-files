@@ -1,3 +1,7 @@
+# Commit messages, PR titles and PR descriptions
+
+Before writing or rewriting any commit message, PR title or PR description, use the `git-writing` skill. It covers the shape (why, then how) and pulls in `dom-voice` for the tone. Do not skip it for "small" commits.
+
 # MCP Tool Routing
 
 - **context7**: when writing or reviewing code that calls an external library or
