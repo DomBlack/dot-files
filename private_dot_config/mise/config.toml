@@ -10,6 +10,19 @@ go = "1.27.1"
 # $HOME, see fish conf.d/go.fish) whichever Go built them.
 GOBIN = "{{env.HOME}}/bin"
 
+[hooks]
+# dlv is the exception: it's tied to the Go it debugs, so every Go version gets
+# its own, built by that Go into its own bin dir (which comes before ~/bin on
+# PATH). Fires after any install, whichever config pinned the Go.
+postinstall = '''
+for d in "${MISE_DATA_DIR:-$HOME/.local/share/mise}"/installs/go/*/; do
+  d="${d%/}"
+  [ -L "$d" ] || [ -x "$d/bin/dlv" ] || [ ! -x "$d/bin/go" ] && continue
+  echo "installing dlv for go $(basename "$d")"
+  GOROOT="$d" GOBIN="$d/bin" GOTOOLCHAIN=local "$d/bin/go" install github.com/go-delve/delve/cmd/dlv@latest
+done
+'''
+
 [settings]
 # honour work repos' .nvmrc / .node-version files
 idiomatic_version_file_enable_tools = ["node"]
