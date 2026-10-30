@@ -18,7 +18,7 @@
 	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 {{- end }}
 	name = Dominic Black
-	email = {{ .email }}
+	email = me@dom-black.co.uk
 {{ else -}}
 # Linux devboxes: sign with the local key. NOTE: a devbox's public key must be
 # registered on GitHub as a signing key (one-time, from an authed machine) for
@@ -32,8 +32,12 @@
 [user]
 	signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 	name = Dominic Black
-	email = {{ .email }}
+	email = me@dom-black.co.uk
 {{ end -}}
+# Work repos commit as the work address; everything else uses the personal one
+# above. The trailing slash makes it match every repo below that folder.
+[includeIf "gitdir:~/src/github.com/avianlabs/"]
+	path = ~/.config/git/avianlabs.gitconfig
 [github]
 	user = domblack
 [column]
@@ -43,6 +47,7 @@
 	sort = -committerdate
 [tag]
 	sort = version:refname
+	gpgsign = true
 [init]
 	defaultBranch = main
 [diff]
@@ -224,7 +229,7 @@
 	c = stack create
 	m = stack modify
 	rs = stack restack
-	ss = stack submit --stack
+	ss = stack submit
 	u = stack up
 	d = stack down
 	t = stack top
@@ -232,6 +237,17 @@
 	co = stack checkout
 	continue = stack continue
 	abort = stack abort
+	absorb = stack absorb
+	reorder = stack reorder
+	move = stack move
+	fold = stack fold
+	untrack = stack untrack
+	rename = stack rename
+	track = stack init
+	pop = stack pop
+	pr = stack pr
+	undo = stack undo
+	ab = stack absorb
 {{- end }}
 [interactive]
 	diffFilter = delta --color-only
@@ -267,8 +283,20 @@
 	managedAliases = co
 	managedAliases = continue
 	managedAliases = abort
+	managedAliases = absorb
+	managedAliases = reorder
+	managedAliases = move
+	managedAliases = fold
+	managedAliases = untrack
+	managedAliases = rename
+	managedAliases = track
+	managedAliases = pop
+	managedAliases = pr
+	managedAliases = undo
+	managedAliases = ab
 	managedFiles = {{ .chezmoi.homeDir }}/.config/fish/completions/git-stack.fish
 	managedFiles = {{ .chezmoi.homeDir }}/.claude/skills/git-stack/SKILL.md
+	managedFiles = {{ .chezmoi.homeDir }}/.codex/skills/git-stack/SKILL.md
 [stack "ai"]
 	extraPrompt = Use /dom-voice to write all commits, titles and descriptions. Always write about why we're making the changes, don't mention tests.
 	auto = true

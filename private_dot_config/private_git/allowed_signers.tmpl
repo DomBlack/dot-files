@@ -3,14 +3,24 @@
   / `git verify-commit`. Lists every public key Dom uses to sign
   commits across his machines, so any of them verifies locally.
 
-  Format: <principal> [namespaces=...] <key-type> <base64-blob>
+  Format: <principals> [namespaces=...] <key-type> <base64-blob>
   See ssh-keygen(1) "ALLOWED SIGNERS".
+
+  Every key may sign as any of the work and personal emails, so
+  commits verify whichever identity they were made under.
 */ -}}
-# 1Password-managed key (Mac mini + any box with 1Password GUI)
-{{ .email }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
+{{- $principals := list .email "dom@avianlabs.net" "me@dom-black.co.uk" "me@jdm.black" | uniq | join "," -}}
+# 1Password hosted key
+{{ $principals }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPhcqTkGR7DbXnRvnKpmFn5MLZ1iQ+NHbp0Ak0hpR4Sd
 
-# Local ~/.ssh/id_ed25519 (remote dev boxes — no 1Password GUI)
-{{ .email }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ3rOWfDkPfsItHtRCKrq3SfBPVEW3xKT/nF3zKEsZ+I
+# Funny It Worked Last Time
+{{ $principals }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ3rOWfDkPfsItHtRCKrq3SfBPVEW3xKT/nF3zKEsZ+I
 
-# Local ~/.ssh/id_ed25519 on the Mac (filesystem signing key)
-{{ .email }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICHqypSrOCug75hC++n8qS375Pqybofv23o2ME/Awqpu
+# Lucid Nonsense
+{{ $principals }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICHqypSrOCug75hC++n8qS375Pqybofv23o2ME/Awqpu
+
+# A Series Of Unlikely Explanations
+{{ $principals }} ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAdqemeLU5u8uz5oSijywP8fOAxZYfNCJQy9KfyXxTxh
+
+# Lapsed Pacifist
+{{ $principals }} ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEsjYfrzDBm7PWN0y+ojsoGA+dy0n2FxYnjnqxRDMk2VRluwiFf7ZNAeyYZ0UCQI/SGEBtWgfwK1+qRUWFdJ0Nk=
