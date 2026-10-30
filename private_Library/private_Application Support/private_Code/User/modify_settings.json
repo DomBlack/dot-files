@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""chezmoi modify script: merge my fixed settings into VS Code's settings.json.
+
+Receives current file contents on stdin, writes merged contents to stdout.
+Only the keys in SETTINGS are overwritten, so anything set through the
+settings UI (or machine specific, like remote SSH hosts) is left alone.
+Most of these came over from my old Cursor setup.
+"""
+import json
+import sys
+
+SETTINGS = {
+    # Editor
+    "editor.formatOnSave": True,
+    "editor.fontFamily": "PragmataPro Mono Liga, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontLigatures": True,
+    "editor.fontSize": 13,
+    "editor.inlayHints.enabled": "on",
+    "editor.bracketPairColorization.enabled": True,
+    "editor.minimap.enabled": True,
+    "editor.minimap.side": "right",
+    "editor.minimap.renderCharacters": False,
+    "editor.minimap.maxColumn": 120,
+    "window.commandCenter": True,
+    "window.autoDetectColorScheme": False,
+
+    # Git and GitLens
+    "git.openRepositoryInParentFolders": "always",
+    "git.confirmSync": False,
+    "gitlens.currentLine.enabled": True,
+    "gitlens.codeLens.enabled": True,
+    "gitlens.codeLens.recentChange.enabled": True,
+    "gitlens.codeLens.authors.enabled": True,
+
+    # Error Lens
+    "errorLens.errorBackground": "#ffcccc",
+    "errorLens.warningBackground": "#fff5cc",
+    "errorLens.infoBackground": "#ccf5ff",
+    "errorLens.borderWidth": 1,
+    "errorLens.fontWeight": "bold",
+
+    # Go
+    "go.formatTool": "goimports",
+    "go.lintTool": "golangci-lint",
+    "go.toolsManagement.autoUpdate": True,
+    "go.testFlags": ["-v"],
+    "go.coverOnSave": False,
+    "go.coverageDecorator": {"type": "gutter"},
+    "go.enableCodeLens": {"runtest": True},
+    "go.inlayHints.compositeLiteralFields": True,
+    "go.inlayHints.parameterNames": True,
+    "go.testExplorer.showDynamicSubtestsInEditor": True,
+    "go.showWelcome": False,
+    "go.survey.prompt": False,
+    "gopls": {
+        "formatting.local": "github.com/avianlabs/backend",
+        "staticcheck": True,
+        "ui.completion.usePlaceholders": True,
+        "analyses": {
+            "appends": True,
+            "unusedparams": True,
+            "nilness": True,
+            "unusedwrite": True,
+        },
+    },
+
+    # Python
+    "python.analysis.typeCheckingMode": "standard",
+
+    # JSON / hujson (Tailscale ACLs and friends)
+    "files.associations": {"*.hujson": "jsonc"},
+    "json.schemas": [
+        {"fileMatch": ["*.hujson"], "schema": {"allowTrailingCommas": True}},
+    ],
+    "[jsonc]": {"editor.tabSize": 2},
+    "javascript.updateImportsOnFileMove.enabled": "always",
+}
+
+raw = sys.stdin.read()
+try:
+    data = json.loads(raw) if raw.strip() else {}
+except json.JSONDecodeError:
+    # VS Code allows comments and trailing commas, which json can't read.
+    # Never corrupt the live settings: emit input unchanged and skip merging
+    print("WARN: VS Code settings.json isn't plain JSON; not merging my settings into it", file=sys.stderr)
+    sys.stdout.write(raw)
+    sys.exit(0)
+
+if not isinstance(data, dict):
+    # Never corrupt the live settings: emit input unchanged and skip merging
+    sys.stdout.write(raw)
+    sys.exit(0)
+
+data.update(SETTINGS)
+
+json.dump(data, sys.stdout, indent=4)
+sys.stdout.write("\n")

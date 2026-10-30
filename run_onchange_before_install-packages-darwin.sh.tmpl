@@ -44,5 +44,24 @@ cask "visual-studio-code"      # VS Code
 cask "claude"                   # Claude
 cask "jetbrains-toolbox"        # JetBrains Toolbox
 cask "orbstack"                 # OrbStack (docker desktop alternative)
+
+# =============================================================================
+# VS Code Extensions
+# =============================================================================
+vscode "golang.go"                          # Go
+vscode "ms-python.python"                   # Python (pulls in Pylance, debugpy and Python Environments)
+vscode "bufbuild.vscode-buf"                # Protobuf via buf
+vscode "tamasfe.even-better-toml"           # TOML
+vscode "github.vscode-github-actions"       # GitHub Actions workflows
+vscode "eamodio.gitlens"                    # Git blame and history inline
+vscode "usernamehw.errorlens"               # Errors and warnings inline on the line
+vscode "aaron-bond.better-comments"         # Highlight TODO / ! / ? comments
+vscode "gruntfuggly.todo-tree"              # List every TODO in the workspace
+vscode "tooltitudeteam.tooltitude"          # Go and Python code lenses (references, implementations)
+vscode "k--kato.intellij-idea-keybindings"  # IntelliJ keybindings
+vscode "anthropic.claude-code"              # Claude Code
+vscode "ms-azuretools.vscode-docker"        # Docker
+vscode "ms-vscode-remote.remote-ssh"        # Remote SSH
+vscode "ms-vscode-remote.remote-containers" # Dev Containers
 EOF
 {{ end -}}

@@ -4,3 +4,6 @@ docs
 {{ if .isRemoteDevBox }}
 .config/ghostty
 {{ end }}
+{{ if ne .chezmoi.os "darwin" }}
+Library
+{{ end }}
